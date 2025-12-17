@@ -27,9 +27,10 @@ export async function POST(req: NextRequest) {
 
         const roomLabel = roomType ? roomType.replace(/_/g, ' ') : 'room';
         const styleDescription = stylePrompts[style] || style;
-        const prompt = `Virtual staging of a ${roomLabel} in ${style} style. ${styleDescription}
+        const prompt = `Strictly preserve exact room structure, perspective, and original dimensions. Do NOT change the camera angle or field of view.
+    Virtual staging of a ${roomLabel} in ${style} style. ${styleDescription}
     High quality, photorealistic, interior design, 8k resolution.
-    Keep the room structure, replace furniture and decor (including wall art) to match ${style}.
+    Keep all walls, windows, floors, and ceiling exactly as they are. Only replace movable furniture and decor to match ${style}.
     IMPORTANT: If a media console or TV stand is visible, place a large modern flat-screen TV on it. Replace any painting or artwork above the unit with the TV.`;
 
         console.log(`Generating with dimensions: ${imageSize ? `${imageSize.width}x${imageSize.height}` : 'default'}`);
