@@ -171,7 +171,7 @@ export default function Home() {
       />
 
       <main className={cn(
-        "flex-1 min-h-screen bg-gradient-to-br from-background via-muted/30 to-background overflow-y-auto transition-all",
+        "flex-1 min-h-screen bg-gradient-to-b from-[#F2F5FF] to-white overflow-y-auto transition-all",
         originalImage ? "p-4" : "p-4 md:p-8"
       )}>
         {/* Header Controls */}
