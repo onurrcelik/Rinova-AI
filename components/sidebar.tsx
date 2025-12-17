@@ -13,6 +13,7 @@ interface Generation {
     style: string;
     original_image: string;
     generated_image: string;
+    room_type?: string;
 }
 
 interface SidebarProps {
@@ -93,6 +94,15 @@ export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: Si
         }
     };
 
+    const formatRoomLabel = (gen: Generation) => {
+        const style = gen.style || 'Design';
+        const room = gen.room_type ? gen.room_type.replace(/_/g, ' ') : '';
+        // Capitalize for display
+        const roomCapitalized = room.charAt(0).toUpperCase() + room.slice(1);
+
+        return room ? `${style} ${roomCapitalized}` : style;
+    };
+
     return (
         <>
             <div
@@ -136,10 +146,10 @@ export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: Si
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="text-sm font-medium truncate text-foreground group-hover:text-primary transition-colors">
-                                        {gen.style || 'Design'}
+                                        {formatRoomLabel(gen)}
                                     </div>
                                     <div className="text-xs text-muted-foreground truncate">
-                                        {new Date(gen.created_at).toLocaleDateString()}
+                                        {new Date(gen.created_at).toLocaleDateString()} {new Date(gen.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
                                 <button

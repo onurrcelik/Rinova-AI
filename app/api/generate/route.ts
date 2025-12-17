@@ -33,16 +33,25 @@ export async function POST(req: NextRequest) {
         const roomLabel = roomType ? roomType.replace(/_/g, ' ') : 'room';
         const styleDescription = stylePrompts[style] || style;
 
-        let tvPrompt = "";
+        let specificPrompt = "";
+
         if (roomType === 'living_room') {
-            tvPrompt = "IMPORTANT: If a media console or TV stand is visible, place a large modern flat-screen TV on it. Replace any painting or artwork above the unit with the TV.";
+            specificPrompt = "IMPORTANT: If a media console or TV stand is visible, place a large modern flat-screen TV on it. Replace any painting or artwork above the unit with the TV.";
+        } else if (roomType === 'bathroom') {
+            specificPrompt = "IMPORTANT: Strictly preserve existing wall and floor tiles. Do NOT change tile patterns, size, or material. Only enhance lighting and update movable decor like towels or mirrors.";
+        } else if (roomType === 'kitchen') {
+            specificPrompt = "IMPORTANT: Preserve the exact layout of cabinets, sink, and stove. Do not move appliances or change the structural cabinetry. Focus on updating finishes, countertops, and backsplash only.";
+        } else if (roomType === 'bedroom') {
+            specificPrompt = "IMPORTANT: Keep the bed in its original position. Focus on upgrading the bedding, headboard, nightstands, and rugs.";
+        } else if (roomType === 'dining_room') {
+            specificPrompt = "IMPORTANT: Preserve the dining table's location and the ceiling light fixture position. Focus on updating the table style and chairs.";
         }
 
         const prompt = `Strictly preserve exact room structure, perspective, and original dimensions. Do NOT change the camera angle or field of view.
     Virtual staging of a ${roomLabel} in ${style} style. ${styleDescription}
     High quality, photorealistic, interior design, 8k resolution.
     Keep all walls, windows, floors, and ceiling exactly as they are. Only replace movable furniture and decor to match ${style}.
-    ${tvPrompt}`;
+    ${specificPrompt}`;
 
         console.log(`Generating with dimensions: ${imageSize ? `${imageSize.width}x${imageSize.height}` : 'default'}`);
 
@@ -51,19 +60,29 @@ export async function POST(req: NextRequest) {
         // 1. Prepare Supabase (if configured)
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        const generationId = v4();
+        const recordId = v4(); // Keep UUID for Database Primary Key
         let uploadOriginalPromise: Promise<any> = Promise.resolve(null);
         let finalOriginalUrl: string | null = null;
         let supabase: any = null;
 
+        // Variables for storage folder, defined here to be in scope for both original and generated uploads
+        let storageFolder: string | null = null;
+
         if (supabaseUrl && supabaseKey) {
             supabase = createClient(supabaseUrl, supabaseKey);
 
-            // Start uploading Original Image immediately (don't wait for AI)
+            // Create a readable folder name: Style_Room_Date_Time_UUID
+            // We append UUID to ensure uniqueness regardless of time/style
+            const cleanStyle = style.replace(/[^a-zA-Z0-9]/g, '_');
+            const cleanRoom = roomType ? roomType.replace(/[^a-zA-Z0-9]/g, '_') : 'room';
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            storageFolder = `${cleanStyle}_${cleanRoom}_${timestamp}_${recordId}`;
+
+            // 1. Upload Original Image
             const base64Data = image.split(',')[1];
             const contentType = image.substring(image.indexOf(':') + 1, image.indexOf(';')) || 'image/png';
             const fileExt = contentType.split('/')[1] || 'png';
-            const originalPath = `${generationId}/original.${fileExt}`;
+            const originalPath = `${storageFolder}/original.${fileExt}`;
 
             uploadOriginalPromise = (async () => {
                 console.time('Upload_Original');
@@ -115,7 +134,7 @@ export async function POST(req: NextRequest) {
 
         if (data.images && data.images.length > 0) {
             // 4. Upload Generated Images (Must happen after AI finishes)
-            if (supabase && finalOriginalUrl) {
+            if (supabase && finalOriginalUrl && storageFolder) {
                 console.time('Upload_Generated_Batch');
                 const generatedUrls: string[] = [];
 
@@ -125,7 +144,7 @@ export async function POST(req: NextRequest) {
 
                     const genRes = await fetch(generatedImageUrl);
                     const genBlob = await genRes.arrayBuffer();
-                    const genPath = `${generationId}/generated_${index + 1}.jpeg`;
+                    const genPath = `${storageFolder}/generated_${index + 1}.jpeg`;
 
                     const { error: uploadError2 } = await supabase.storage
                         .from('real-estate-generations')
@@ -146,11 +165,12 @@ export async function POST(req: NextRequest) {
                 const { error: dbError } = await supabase
                     .from('real-estate-generations')
                     .insert({
-                        id: generationId,
+                        id: recordId,
                         original_image: finalOriginalUrl,
                         generated_image: JSON.stringify(generatedUrls),
                         style: style,
-                        prompt: prompt
+                        prompt: prompt,
+                        room_type: roomType
                     });
                 console.timeEnd('DB_Insert');
 

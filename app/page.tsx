@@ -18,6 +18,7 @@ export default function Home() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [selectedStyle, setSelectedStyle] = useState<string>('Modern');
+  const [selectedRoomType, setSelectedRoomType] = useState<string>('living_room');
   const [isGenerating, setIsGenerating] = useState(false);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export default function Home() {
         body: JSON.stringify({
           image: originalImage,
           style: selectedStyle,
+          roomType: selectedRoomType,
           imageSize: imageSize,
         }),
       });
@@ -93,6 +95,7 @@ export default function Home() {
     setSelectedImageIndex(0);
     setImageSize(null);
     setError(null);
+    setSelectedRoomType('living_room');
   };
 
   const handleDownload = async () => {
@@ -206,13 +209,36 @@ export default function Home() {
 
                   {/* Sidebar / Options */}
                   <div className="space-y-6">
-                    <div className="bg-card border rounded-xl p-4 shadow-sm">
-                      <h3 className="font-semibold mb-4">Select Style</h3>
-                      <StyleSelector
-                        currentStyle={selectedStyle}
-                        onStyleSelect={setSelectedStyle}
-                        className="grid-cols-2 md:grid-cols-2 gap-2"
-                      />
+                    <div className="bg-card border rounded-xl p-4 shadow-sm space-y-6">
+
+                      {/* Room Type Selector */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Room Type
+                        </label>
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={selectedRoomType}
+                          onChange={(e) => setSelectedRoomType(e.target.value)}
+                        >
+                          <option value="living_room">Living Room</option>
+                          <option value="bedroom">Bedroom</option>
+                          <option value="kitchen">Kitchen</option>
+                          <option value="dining_room">Dining Room</option>
+                          <option value="bathroom">Bathroom</option>
+                          <option value="office">Office</option>
+                          <option value="studio">Studio</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h3 className="font-semibold">Select Style</h3>
+                        <StyleSelector
+                          currentStyle={selectedStyle}
+                          onStyleSelect={setSelectedStyle}
+                          className="grid-cols-2 md:grid-cols-2 gap-2"
+                        />
+                      </div>
                     </div>
 
                     <div className="flex flex-col gap-3">
