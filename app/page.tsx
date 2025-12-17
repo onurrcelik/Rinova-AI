@@ -342,7 +342,7 @@ export default function Home() {
                                 </div>
                               </div>
                               <h3 className="mt-8 text-2xl font-bold text-foreground">{t.app.designingPrompt}</h3>
-                              <p className="mt-2 text-muted-foreground">Using Gemini 2.5 architecture...</p>
+                              <p className="mt-2 text-muted-foreground">{t.app.designingSubtext}</p>
                             </div>
                           )}
                         </div>
@@ -350,6 +350,7 @@ export default function Home() {
                         <ComparisonViewer
                           beforeImage={originalImage}
                           afterImage={generatedImages[selectedImageIndex]}
+                          originalLabel={t.app.originalLabel}
                         />
                       )}
                     </div>
