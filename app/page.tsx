@@ -234,7 +234,7 @@ export default function Home() {
             {originalImage && (
               <div className="space-y-8 animate-in slide-in-from-bottom duration-500">
 
-                <div className="grid lg:grid-cols-[360px_1fr] gap-8 items-start">
+                <div className="grid lg:grid-cols-[500px_1fr] gap-8 items-start">
 
                   {/* Options Panel */}
                   <div className="space-y-6 lg:sticky lg:top-8">
