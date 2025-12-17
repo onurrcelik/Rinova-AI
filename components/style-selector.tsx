@@ -1,26 +1,23 @@
-'use client';
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Palette, Home, Briefcase, Coffee, Ghost, Sun } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+
+export interface StyleOption {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+    description: string;
+}
 
 interface StyleSelectorProps {
     currentStyle: string;
     onStyleSelect: (style: string) => void;
     className?: string;
+    styles: StyleOption[];
 }
 
-const styles = [
-    { id: 'Modern', label: 'Modern', icon: Home, description: 'Clean lines, minimalism' },
-    { id: 'Scandinavian', label: 'Scandinavian', icon: Sun, description: 'Light, cozy, natural' },
-    { id: 'Industrial', label: 'Industrial', icon: Briefcase, description: 'Raw, urban, edgy' },
-    { id: 'Bohemian', label: 'Bohemian', icon: Coffee, description: 'Eclectic, colorful' },
-    { id: 'Minimalist', label: 'Minimalist', icon: Ghost, description: 'Less is more' },
-    { id: 'Contemporary', label: 'Contemporary', icon: Palette, description: 'Current, trendy' },
-];
-
-export function StyleSelector({ currentStyle, onStyleSelect, className }: StyleSelectorProps) {
+export function StyleSelector({ currentStyle, onStyleSelect, className, styles }: StyleSelectorProps) {
     return (
         <div className={cn('grid grid-cols-2 md:grid-cols-3 gap-4', className)}>
             {styles.map((style) => {

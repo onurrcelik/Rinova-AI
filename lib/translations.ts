@@ -1,0 +1,91 @@
+
+export type Language = 'en' | 'it';
+
+export const translations = {
+    en: {
+        app: {
+            title: "Virtual Staging AI",
+            subtitle: "Transform your real estate photos instantly with Gemini 2.5.",
+            uploadTitle: "Upload Image",
+            uploadDesc: "Drag & drop or click to upload",
+            generate: "Generate Design",
+            regenerate: "Regenerate",
+            generating: "Designing...",
+            download: "Download Photo",
+            startOver: "Start Over",
+            selectStyle: "Select Style",
+            roomType: "Room Type",
+            originalPreview: "Original Preview",
+            designingPrompt: "Designing your room...",
+            newDesign: "New Design",
+            recent: "Recent",
+            noDesigns: "No designs yet",
+            loadingHistory: "Loading history...",
+            deleteConfirm: "Are you sure you want to delete this design?",
+            errorGenerating: "Failed to generate image",
+            errorNoImages: "No images returned from API",
+            controls: "Controls",
+        },
+        rooms: {
+            living_room: "Living Room",
+            bedroom: "Bedroom",
+            kitchen: "Kitchen",
+            dining_room: "Dining Room",
+            bathroom: "Bathroom",
+            office: "Office",
+            studio: "Studio",
+            outdoor: "Outdoor",
+        },
+        styles: {
+            modern: { label: "Modern", desc: "Clean lines, minimalism" },
+            scandinavian: { label: "Scandinavian", desc: "Light, cozy, natural" },
+            industrial: { label: "Industrial", desc: "Raw, urban, edgy" },
+            bohemian: { label: "Bohemian", desc: "Eclectic, colorful" },
+            minimalist: { label: "Minimalist", desc: "Less is more" },
+            contemporary: { label: "Contemporary", desc: "Current, trendy" },
+        }
+    },
+    it: {
+        app: {
+            title: "Virtual Staging AI", // Often kept in English or "Home Staging Virtuale AI"
+            subtitle: "Trasforma le tue foto immobiliari all'istante con Gemini 2.5.",
+            uploadTitle: "Carica Immagine",
+            uploadDesc: "Trascina o clicca per caricare",
+            generate: "Genera Design",
+            regenerate: "Rigenera",
+            generating: "Progettazione in corso...",
+            download: "Scarica Foto",
+            startOver: "Ricomincia",
+            selectStyle: "Seleziona Stile",
+            roomType: "Tipo di Stanza",
+            originalPreview: "Anteprima Originale",
+            designingPrompt: "Stiamo progettando la tua stanza...",
+            newDesign: "Nuovo Design",
+            recent: "Recenti",
+            noDesigns: "Nessun design ancora",
+            loadingHistory: "Caricamento cronologia...",
+            deleteConfirm: "Sei sicuro di voler eliminare questo design?",
+            errorGenerating: "Impossibile generare l'immagine",
+            errorNoImages: "Nessuna immagine restituita dall'API",
+            controls: "Controlli",
+        },
+        rooms: {
+            living_room: "Soggiorno",
+            bedroom: "Camera da Letto",
+            kitchen: "Cucina",
+            dining_room: "Sala da Pranzo",
+            bathroom: "Bagno",
+            office: "Ufficio",
+            studio: "Monolocale",
+            outdoor: "Esterno",
+        },
+        styles: {
+            modern: { label: "Moderno", desc: "Linee pulite, minimalismo" },
+            scandinavian: { label: "Scandinavo", desc: "Luminoso, accogliente, naturale" },
+            industrial: { label: "Industriale", desc: "Grezzo, urbano, audace" },
+            bohemian: { label: "Bohémien", desc: "Eclettico, colorato" },
+            minimalist: { label: "Minimalista", desc: "Meno è meglio" },
+            contemporary: { label: "Contemporaneo", desc: "Attuale, di tendenza" },
+        }
+    }
+};

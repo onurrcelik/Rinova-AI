@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Clock, History, ChevronLeft, ChevronRight, MessageSquare, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { translations, Language } from '@/lib/translations';
 
 interface Generation {
     id: string;
@@ -21,11 +22,13 @@ interface SidebarProps {
     onNewChat: () => void;
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
+    lang: Language;
 }
 
-export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: SidebarProps) {
+export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen, lang }: SidebarProps) {
     const [generations, setGenerations] = useState<Generation[]>([]);
     const [loading, setLoading] = useState(true);
+    const t = translations[lang];
 
     const fetchHistory = async () => {
         try {
@@ -73,7 +76,7 @@ export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: Si
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation(); // Prevent selecting the item
-        if (!confirm('Are you sure you want to delete this design?')) return;
+        if (!confirm(t.app.deleteConfirm)) return;
 
         try {
             // Because we now use folders, we should technically delete the folder too 
@@ -96,11 +99,19 @@ export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: Si
 
     const formatRoomLabel = (gen: Generation) => {
         const style = gen.style || 'Design';
-        const room = gen.room_type ? gen.room_type.replace(/_/g, ' ') : '';
-        // Capitalize for display
-        const roomCapitalized = room.charAt(0).toUpperCase() + room.slice(1);
+        // Try to translate room type if available
+        let roomLabel = '';
+        if (gen.room_type) {
+            const key = gen.room_type as keyof typeof t.rooms;
+            roomLabel = t.rooms[key] || gen.room_type.replace(/_/g, ' ');
+        }
 
-        return room ? `${style} ${roomCapitalized}` : style;
+        // Capitalize for display if falling back to English/Raw
+        if (roomLabel && gen.room_type && !t.rooms[gen.room_type as keyof typeof t.rooms]) {
+            roomLabel = roomLabel.charAt(0).toUpperCase() + roomLabel.slice(1);
+        }
+
+        return roomLabel ? `${style} ${roomLabel}` : style;
     };
 
     return (
@@ -118,18 +129,18 @@ export function Sidebar({ onSelectGeneration, onNewChat, isOpen, setIsOpen }: Si
                         variant="outline"
                     >
                         <Plus className="w-4 h-4" />
-                        New Design
+                        {t.app.newDesign}
                     </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2 space-y-2">
-                    <div className="px-2 py-1 text-xs font-medium text-muted-foreground">Recent</div>
+                    <div className="px-2 py-1 text-xs font-medium text-muted-foreground">{t.app.recent}</div>
                     {loading ? (
-                        <div className="text-sm text-center py-4 text-muted-foreground">Loading history...</div>
+                        <div className="text-sm text-center py-4 text-muted-foreground">{t.app.loadingHistory}</div>
                     ) : generations.length === 0 ? (
                         <div className="text-sm text-center py-8 text-muted-foreground flex flex-col items-center gap-2">
                             <History className="w-8 h-8 opacity-20" />
-                            <p>No designs yet</p>
+                            <p>{t.app.noDesigns}</p>
                         </div>
                     ) : (
                         generations.map((gen) => (
