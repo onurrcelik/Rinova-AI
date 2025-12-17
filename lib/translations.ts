@@ -4,10 +4,13 @@ export type Language = 'en' | 'it';
 export const translations = {
     en: {
         app: {
-            title: "Virtual Staging AI",
-            subtitle: "Transform your real estate photos instantly with Gemini 2.5.",
+            title: "Rinova AI",
+            subtitle: "Uplift your real estate photos instantly with AI!",
             uploadTitle: "Upload Image",
+            uploadMainTitle: "Upload your room photo",
+            uploadDragActive: "Drop your image here",
             uploadDesc: "Drag & drop or click to upload",
+            uploadSupportedFormats: "Supports JPG, PNG, WEBP.",
             generate: "Generate Design",
             regenerate: "Regenerate",
             generating: "Designing...",
@@ -47,10 +50,13 @@ export const translations = {
     },
     it: {
         app: {
-            title: "Virtual Staging AI", // Often kept in English or "Home Staging Virtuale AI"
-            subtitle: "Trasforma le tue foto immobiliari all'istante con Gemini 2.5.",
-            uploadTitle: "Carica Immagine",
+            title: "Rinova AI",
+            subtitle: "Migliora istantaneamente le tue foto immobiliari con l'IA!",
+            uploadTitle: "Carica un'Immagine",
+            uploadMainTitle: "Carica la foto della tua stanza",
+            uploadDragActive: "Rilascia l'immagine qui",
             uploadDesc: "Trascina o clicca per caricare",
+            uploadSupportedFormats: "Supporta JPG, PNG, WEBP.",
             generate: "Genera Design",
             regenerate: "Rigenera",
             generating: "Progettazione in corso...",

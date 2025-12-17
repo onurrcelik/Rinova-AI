@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Card } from '@/components/ui/card';
@@ -9,9 +7,20 @@ import { cn } from '@/lib/utils';
 interface UploadZoneProps {
     onImageSelected: (file: File) => void;
     className?: string;
+    title: string;
+    dragActiveTitle: string;
+    description: string;
+    supportedFormats: string;
 }
 
-export function UploadZone({ onImageSelected, className }: UploadZoneProps) {
+export function UploadZone({
+    onImageSelected,
+    className,
+    title,
+    dragActiveTitle,
+    description,
+    supportedFormats
+}: UploadZoneProps) {
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
             if (acceptedFiles.length > 0) {
@@ -51,10 +60,10 @@ export function UploadZone({ onImageSelected, className }: UploadZoneProps) {
                 />
             </div>
             <h3 className="text-lg font-semibold mb-2">
-                {isDragActive ? 'Drop your image here' : 'Upload your room photo'}
+                {isDragActive ? dragActiveTitle : title}
             </h3>
             <p className="text-sm text-muted-foreground max-w-xs">
-                Drag and drop or click to select. Supports JPG, PNG, WEBP.
+                {description}. {supportedFormats}
             </p>
         </Card>
     );

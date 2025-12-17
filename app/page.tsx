@@ -226,7 +226,13 @@ export default function Home() {
             {/* Upload Zone */}
             {!originalImage && (
               <div className="max-w-2xl mx-auto animate-in fade-in zoom-in duration-500">
-                <UploadZone onImageSelected={handleImageSelect} />
+                <UploadZone
+                  onImageSelected={handleImageSelect}
+                  title={t.app.uploadMainTitle}
+                  dragActiveTitle={t.app.uploadDragActive}
+                  description={t.app.uploadDesc}
+                  supportedFormats={t.app.uploadSupportedFormats}
+                />
               </div>
             )}
 
