@@ -364,9 +364,10 @@ export default function Home() {
             {userLimit && (
               <div className="flex flex-col items-end mr-2">
                 {userLimit.role === 'admin' ? (
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-                    <span>{t.app?.limitless || "Usage Limit: Unlimited"}</span>
-                    <span className="text-sm"></span>
+                  <div className="flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white px-5 py-1.5 rounded-full shadow-xl border border-white/10 ring-1 ring-black/10">
+                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
+                      {t.app?.limitless || "Usage Limit: Unlimited"}
+                    </span>
                   </div>
                 ) : (
                   <div className="w-32 flex flex-col gap-1">

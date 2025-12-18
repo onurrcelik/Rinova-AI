@@ -6,12 +6,20 @@ import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 
+const DEMO_DOMAIN = '@demo.rinova';
+
 // Define the return type explicitly
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
 ): Promise<string | undefined> {
     try {
+        // Allow login with just username (e.g., "CompanyX" -> "CompanyX@demo.rinova")
+        const emailInput = formData.get('email') as string;
+        if (emailInput && !emailInput.includes('@')) {
+            formData.set('email', emailInput + DEMO_DOMAIN);
+        }
+
         await signIn('credentials', formData);
     } catch (error) {
         if (error instanceof AuthError) {
@@ -30,8 +38,16 @@ export async function register(
     prevState: string | undefined,
     formData: FormData,
 ): Promise<string | undefined> {
-    const email = formData.get('email') as string;
+    const rawEmail = formData.get('email') as string;
     const password = formData.get('password') as string;
+
+    // Allow registration with just username (e.g. "CompanyX")
+    let email = rawEmail;
+    if (email && !email.includes('@')) {
+        email = email + DEMO_DOMAIN;
+        // Update formData for subsequent login
+        formData.set('email', email);
+    }
 
     const parsedCredentials = z
         .object({ email: z.string().email(), password: z.string().min(6) })
@@ -41,35 +57,38 @@ export async function register(
         return 'Invalid email or password (min 6 chars).';
     }
 
-    // Enhanced Email Validation
-    const { validate } = await import('deep-email-validator');
-    const valResult = await validate({
-        email: email,
-        sender: email, // accurate validation requires a sender
-        validateRegex: true,
-        validateMx: true,
-        validateTypo: true,
-        validateDisposable: true,
-        validateSMTP: true, // Enable SMTP to check if mailbox exists
-    });
+    // Skip validation for demo accounts
+    if (!email.endsWith(DEMO_DOMAIN)) {
+        // Enhanced Email Validation
+        const { validate } = await import('deep-email-validator');
+        const valResult = await validate({
+            email: email,
+            sender: email, // accurate validation requires a sender
+            validateRegex: true,
+            validateMx: false, // Disable MX check to prevent false positives on valid domains
+            validateTypo: true,
+            validateDisposable: true,
+            validateSMTP: false, // Disable strict mailbox check as requested
+        });
 
-    if (!valResult.valid) {
-        let errorMessage = 'Invalid email address.';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const reasons = valResult as any;
+        if (!valResult.valid) {
+            let errorMessage = 'Invalid email address.';
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const reasons = valResult as any;
 
-        if (reasons.reason === 'typo' && reasons.typo) {
-            errorMessage = `Did you mean ${reasons.typo}?`;
-        } else if (reasons.reason === 'disposable') {
-            errorMessage = 'Disposable email addresses are not allowed.';
-        } else if (reasons.reason === 'mx') {
-            errorMessage = 'Invalid email domain (no MX records).';
-        } else if (reasons.reason === 'smtp') {
-            errorMessage = 'Email address does not exist.';
-        } else if (reasons.reason === 'regex') {
-            errorMessage = 'Invalid email format.';
+            if (reasons.reason === 'typo' && reasons.typo) {
+                errorMessage = `Did you mean ${reasons.typo}?`;
+            } else if (reasons.reason === 'disposable') {
+                errorMessage = 'Disposable email addresses are not allowed.';
+            } else if (reasons.reason === 'mx') {
+                errorMessage = 'Invalid email domain (no MX records).';
+            } else if (reasons.reason === 'smtp') {
+                errorMessage = 'Email address does not exist.';
+            } else if (reasons.reason === 'regex') {
+                errorMessage = 'Invalid email format.';
+            }
+            return errorMessage;
         }
-        return errorMessage;
     }
 
     const supabaseAdmin = createClient(
