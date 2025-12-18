@@ -110,10 +110,10 @@ export async function POST(req: NextRequest) {
             input: {
                 prompt: prompt,
                 image_urls: [image],
-                output_format: "png",
+                output_format: "jpeg",
                 image_size: imageSize || "square_hd",
                 negative_prompt: negativePrompt,
-                num_images: 4,
+                num_images: 2,
             },
             logs: true,
             onQueueUpdate: (update) => {

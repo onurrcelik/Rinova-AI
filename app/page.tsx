@@ -52,31 +52,94 @@ export default function Home() {
     setLang(value as Language);
   };
 
+  // Helper to resize image
+  const resizeImage = async (file: File | Blob): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const maxDim = 2048;
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate new dimensions
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        // Use standard quality settings
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Canvas to Blob failed'));
+            }
+            URL.revokeObjectURL(img.src);
+          },
+          'image/jpeg',
+          0.95
+        );
+      };
+      img.onerror = (err) => {
+        URL.revokeObjectURL(img.src);
+        reject(err);
+      };
+    });
+  };
+
   // Import heic2any deeply
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const handleImageSelect = async (file: File) => {
     setIsProcessing(true);
     let processFile = file;
 
-    // Handle HEIC files
-    if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic') {
-      try {
+    try {
+      // 1. Handle HEIC files
+      if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic') {
         const heic2any = (await import('heic2any')).default;
         const convertedBlob = await heic2any({
           blob: file,
           toType: 'image/jpeg',
-          quality: 0.8
+          quality: 0.95
         });
-
-        // heic2any can return a single blob or an array of blobs. We handle both.
         const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
         processFile = new File([blob], file.name.replace(/\.heic$/i, '.jpg'), { type: 'image/jpeg' });
-      } catch (e) {
-        console.error("HEIC conversion failed:", e);
-        setError("Failed to process HEIC image. Please try a JPEG or PNG.");
-        setIsProcessing(false);
-        return;
       }
+
+      // 2. Resize/Optimize ALL images (Standardize)
+      const resizedBlob = await resizeImage(processFile);
+
+      // Convert back to File for consistency with FileReader logic (optional, but good for name preservation)
+      // Note: we might lose the original name extension if we aren't careful, but we output jpeg.
+      // We'll keep the base name and ensure .jpg extension.
+      const newName = processFile.name.replace(/\.[^/.]+$/, "") + ".jpg";
+      processFile = new File([resizedBlob], newName, { type: 'image/jpeg' });
+
+    } catch (e) {
+      console.error("Image processing failed:", e);
+      setError("Failed to process image. Please try another file.");
+      setIsProcessing(false);
+      return;
     }
 
     const reader = new FileReader();
@@ -125,6 +188,16 @@ export default function Home() {
       }
 
       if (data.generatedImages && data.generatedImages.length > 0) {
+        // Preload images before displaying
+        await Promise.all(data.generatedImages.map((src: string) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        }));
+
         setGeneratedImages(data.generatedImages);
         setSelectedImageIndex(0);
       } else {
