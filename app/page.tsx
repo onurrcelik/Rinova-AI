@@ -23,6 +23,7 @@ export default function Home() {
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const t = translations[lang];
 
@@ -51,9 +52,36 @@ export default function Home() {
     setLang(value as Language);
   };
 
-  const handleImageSelect = (file: File) => {
+  // Import heic2any deeply
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const handleImageSelect = async (file: File) => {
+    setIsProcessing(true);
+    let processFile = file;
+
+    // Handle HEIC files
+    if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic') {
+      try {
+        const heic2any = (await import('heic2any')).default;
+        const convertedBlob = await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.8
+        });
+
+        // heic2any can return a single blob or an array of blobs. We handle both.
+        const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+        processFile = new File([blob], file.name.replace(/\.heic$/i, '.jpg'), { type: 'image/jpeg' });
+      } catch (e) {
+        console.error("HEIC conversion failed:", e);
+        setError("Failed to process HEIC image. Please try a JPEG or PNG.");
+        setIsProcessing(false);
+        return;
+      }
+    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
+      setIsProcessing(false);
       if (e.target?.result) {
         const result = e.target.result as string;
         setOriginalImage(result);
@@ -69,7 +97,8 @@ export default function Home() {
         setError(null);
       }
     };
-    reader.readAsDataURL(file);
+    reader.onerror = () => setIsProcessing(false);
+    reader.readAsDataURL(processFile);
   };
 
   const handleGenerate = async () => {
@@ -232,6 +261,7 @@ export default function Home() {
                   dragActiveTitle={t.app.uploadDragActive}
                   description={t.app.uploadDesc}
                   supportedFormats={t.app.uploadSupportedFormats}
+                  isProcessing={isProcessing}
                 />
               </div>
             )}
