@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { UploadZone } from '@/components/upload-zone';
 import { StyleSelector } from '@/components/style-selector';
 import { ComparisonViewer } from '@/components/comparison-viewer';
+import { LoadingOverlay } from '@/components/loading-overlay';
 import { Sidebar } from '@/components/sidebar';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -436,18 +437,7 @@ export default function Home() {
                               </div>
                             </div>
                           )}
-                          {isGenerating && (
-                            <div className="absolute inset-0 bg-background/60 backdrop-blur-md flex flex-col items-center justify-center z-10 p-8 text-center animate-in fade-in duration-500">
-                              <div className="relative">
-                                <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <Loader2 className="w-8 h-8 text-primary/50 animate-pulse" />
-                                </div>
-                              </div>
-                              <h3 className="mt-8 text-2xl font-bold text-foreground">{t.app.designingPrompt}</h3>
-                              <p className="mt-2 text-muted-foreground">{t.app.designingSubtext}</p>
-                            </div>
-                          )}
+                          <LoadingOverlay isVisible={isGenerating} lang={lang} />
                         </div>
                       ) : (
                         <ComparisonViewer
