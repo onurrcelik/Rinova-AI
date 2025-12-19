@@ -37,6 +37,8 @@ export const translations = {
             whatsappContact: "Or text us via WhatsApp",
             close: "Close",
             controls: "Controls",
+            numberOfImages: "Number of Images to Generate",
+            imageRecommendation: "We recommend 4 images for best results",
         },
         rooms: {
             living_room: "Living Room",
@@ -112,6 +114,8 @@ export const translations = {
             whatsappContact: "Oppure scrivici su WhatsApp",
             close: "Chiudi",
             controls: "Controlli",
+            numberOfImages: "Numero di Immagini da Generare",
+            imageRecommendation: "Consigliamo 4 immagini per i migliori risultati",
         },
         rooms: {
             living_room: "Soggiorno",

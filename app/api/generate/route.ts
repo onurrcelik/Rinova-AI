@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { image, style, imageSize, roomType } = await req.json();
+        const { image, style, imageSize, roomType, numImages = 4 } = await req.json();
 
         if (!image || !style) {
             return NextResponse.json(
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
                 output_format: "jpeg",
                 image_size: imageSize || "square_hd",
                 negative_prompt: negativePrompt,
-                num_images: 2,
+                num_images: numImages,
             },
             logs: true,
             onQueueUpdate: (update) => {

@@ -21,6 +21,7 @@ export default function Home() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [numImages, setNumImages] = useState<number>(4);
   const [selectedStyle, setSelectedStyle] = useState<string>('Modern');
   const [selectedRoomType, setSelectedRoomType] = useState<string>('living_room');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -231,6 +232,7 @@ export default function Home() {
           style: selectedStyle,
           roomType: selectedRoomType,
           imageSize: imageSize,
+          numImages: numImages,
         }),
       });
 
@@ -482,6 +484,34 @@ export default function Home() {
                           className="grid-cols-2 gap-3"
                           styles={styleOptions}
                         />
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-sm font-semibold tracking-wide text-foreground/80 uppercase">
+                          {t.app.numberOfImages || "Number of Images"}
+                        </label>
+                        <div className="grid grid-cols-2 gap-3 p-1 bg-secondary/30 rounded-lg border border-border/50">
+                          {[2, 4].map((num) => (
+                            <Button
+                              key={num}
+                              variant={numImages === num ? "default" : "ghost"}
+                              size="sm"
+                              onClick={() => setNumImages(num)}
+                              className={cn(
+                                "w-full transition-all text-sm font-medium",
+                                numImages === num
+                                  ? "bg-gray-900 text-white shadow-md dark:bg-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100"
+                                  : "bg-transparent text-muted-foreground hover:bg-secondary hover:text-foreground"
+                              )}
+                            >
+                              {num} {lang === 'it' ? (num === 2 ? 'Immagini' : 'Immagini') : (num === 2 ? 'Images' : 'Images')}
+                            </Button>
+                          ))}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground/80 font-medium italic flex items-center gap-1.5 px-1">
+                          <span className="text-primary">✨</span>
+                          {t.app.imageRecommendation || "We recommend 4 images for best results"}
+                        </p>
                       </div>
 
                       <div className="pt-2 flex flex-col gap-4">
