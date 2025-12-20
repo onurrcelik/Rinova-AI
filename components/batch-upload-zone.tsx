@@ -11,6 +11,9 @@ interface BatchUploadZoneProps {
     description?: string;
     isProcessing?: boolean;
     maxFiles?: number;
+    dropTitle?: string;
+    processingTitle?: string;
+    maxFilesText?: string;
 }
 
 export function BatchUploadZone({
@@ -19,7 +22,10 @@ export function BatchUploadZone({
     title = "Upload Room Angles",
     description = "Drag & drop multiple photos of the same room",
     isProcessing = false,
-    maxFiles = 4
+    maxFiles = 4,
+    dropTitle = "Drop photos here",
+    processingTitle = "Processing Batch...",
+    maxFilesText = "(Max 4 images)"
 }: BatchUploadZoneProps) {
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
@@ -57,7 +63,7 @@ export function BatchUploadZone({
             {isProcessing && (
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <Loader2 className="w-10 h-10 text-primary animate-spin mb-3" />
-                    <p className="text-sm font-medium text-foreground animate-pulse">Processing Batch...</p>
+                    <p className="text-sm font-medium text-foreground animate-pulse">{processingTitle}</p>
                 </div>
             )}
 
@@ -71,10 +77,10 @@ export function BatchUploadZone({
                 />
             </div>
             <h3 className="text-lg font-semibold mb-2">
-                {isDragActive ? "Drop photos here" : title}
+                {isDragActive ? dropTitle : title}
             </h3>
             <p className="text-sm text-muted-foreground max-w-xs">
-                {description}. (Max {maxFiles} images)
+                {description}. {maxFilesText}
             </p>
         </Card>
     );

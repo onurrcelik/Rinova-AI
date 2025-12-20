@@ -564,7 +564,7 @@ export default function Home() {
                   onClick={() => setMode('single')}
                 >
                   <SingleImageIcon className="w-4 h-4 mr-2" />
-                  Single Room
+                  {t.app.singleRoom}
                 </Button>
                 <Button
                   variant={mode === 'batch' ? 'default' : 'ghost'}
@@ -572,7 +572,7 @@ export default function Home() {
                   onClick={() => setMode('batch')}
                 >
                   <Layers className="w-4 h-4 mr-2" />
-                  Multi-Angle Project
+                  {t.app.multiAngleProject}
                 </Button>
               </div>
             </div>
@@ -597,6 +597,11 @@ export default function Home() {
                   <BatchUploadZone
                     onImagesSelected={handleBatchImagesSelect}
                     isProcessing={isProcessing}
+                    title={t.app.batchUploadTitle}
+                    description={t.app.batchDesc}
+                    dropTitle={t.app.batchDropActive}
+                    processingTitle={t.app.batchProcessing}
+                    maxFilesText={t.app.maxImages}
                   />
                 )}
               </div>
@@ -665,13 +670,15 @@ export default function Home() {
                           </div>
                         ) : (
                           <div className="text-sm text-muted-foreground italic">
-                            Batch mode generates 1 variation per angle to ensure consistency.
+                            {t.app.batchConsistencyMsg}
                           </div>
                         )}
-                        <p className="text-[11px] text-muted-foreground/80 font-medium italic flex items-center gap-1.5 px-1">
-                          <span className="text-primary">✨</span>
-                          {t.app.imageRecommendation || "We recommend 4 images for best results"}
-                        </p>
+                        {mode === 'single' && (
+                          <p className="text-[11px] text-muted-foreground/80 font-medium italic flex items-center gap-1.5 px-1">
+                            <span className="text-primary">✨</span>
+                            {t.app.imageRecommendation || "We recommend 4 images for best results"}
+                          </p>
+                        )}
                       </div>
 
                       <div className="pt-2 flex flex-col gap-4">
@@ -798,7 +805,7 @@ export default function Home() {
                             {originalImages.map((img, idx) => (
                               <div key={idx} className="bg-card border rounded-xl overflow-hidden relative shadow-sm h-64 flex items-center justify-center bg-muted/10">
                                 <img src={img} className="max-w-full max-h-full object-contain" />
-                                <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">Angle {idx + 1}</div>
+                                <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">{t.app.angle} {idx + 1}</div>
                               </div>
                             ))}
                             <LoadingOverlay isVisible={isGenerating} lang={lang} />
@@ -808,13 +815,13 @@ export default function Home() {
                             {batchResults.map((result, idx) => (
                               <div key={idx} className="space-y-4">
                                 <h3 className="text-lg font-bold text-muted-foreground flex items-center gap-2">
-                                  <SingleImageIcon className="w-5 h-5" /> Angle {idx + 1}
+                                  <SingleImageIcon className="w-5 h-5" /> {t.app.angle} {idx + 1}
                                 </h3>
                                 <div className="h-[400px] bg-card border rounded-2xl overflow-hidden shadow-lg ring-1 ring-border/50 relative group">
                                   <ComparisonViewer
                                     beforeImage={result.original}
                                     afterImage={result.generated[0]}
-                                    originalLabel={`Original (Angle ${idx + 1})`}
+                                    originalLabel={`${t.app.originalLabel} (${t.app.angle} ${idx + 1})`}
                                   />
                                   {/* Save Button for Batch Result */}
                                   {result.generated[0] && (
