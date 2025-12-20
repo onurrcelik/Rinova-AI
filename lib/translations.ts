@@ -54,6 +54,7 @@ export const translations = {
             keepSelected: "Keep {selected}",
             watchFlythrough: "Watch Flythrough",
             flythroughTitle: "Room Tour",
+            generateVideoTour: "Generate AI Video Tour",
         },
         rooms: {
             living_room: "Living Room",
@@ -146,6 +147,7 @@ export const translations = {
             keepSelected: "Tieni {selected}",
             watchFlythrough: "Guarda Tour Virtuale",
             flythroughTitle: "Tour della Stanza",
+            generateVideoTour: "Genera Video Tour AI",
         },
         rooms: {
             living_room: "Soggiorno",

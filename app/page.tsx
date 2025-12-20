@@ -7,6 +7,7 @@ import { UploadZone } from '@/components/features/upload/upload-zone';
 import { StyleSelector } from '@/components/features/style/style-selector';
 import { ComparisonViewer } from '@/components/features/viewer/comparison-viewer';
 import { FlythroughViewer } from '@/components/features/viewer/flythrough-viewer';
+import { VideoFlythrough } from '@/components/features/viewer/video-flythrough';
 import { LoadingOverlay } from '@/components/features/layout/loading-overlay';
 import { Sidebar } from '@/components/features/layout/sidebar';
 import { LimitPopup } from '@/components/features/layout/limit-popup';
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { MismatchModal } from '@/components/features/layout/mismatch-modal';
-import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play } from 'lucide-react';
+import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play, Video } from 'lucide-react';
 import { BatchUploadZone } from '@/components/features/upload/batch-upload-zone';
 import { cn } from '@/lib/utils';
 import { translations, Language } from '@/lib/translations';
@@ -36,6 +37,7 @@ export default function Home() {
   const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [batchResults, setBatchResults] = useState<{ original: string; generated: string[] }[]>([]);
   const [showFlythrough, setShowFlythrough] = useState(false);
+  const [showVideoFlythrough, setShowVideoFlythrough] = useState(false);
 
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -877,8 +879,8 @@ export default function Home() {
                           </div>
                         ) : (
                           <div className="space-y-8">
-                            {/* Flythrough Button */}
-                            <div className="flex justify-center">
+                            {/* Flythrough Buttons */}
+                            <div className="flex justify-center gap-4 flex-wrap">
                               <Button
                                 onClick={() => setShowFlythrough(true)}
                                 className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -886,6 +888,14 @@ export default function Home() {
                               >
                                 <Play className="w-5 h-5 mr-2" />
                                 {t.app.watchFlythrough}
+                              </Button>
+                              <Button
+                                onClick={() => setShowVideoFlythrough(true)}
+                                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                size="lg"
+                              >
+                                <Video className="w-5 h-5 mr-2" />
+                                {t.app.generateVideoTour}
                               </Button>
                             </div>
 
@@ -922,11 +932,20 @@ export default function Home() {
                               ))}
                             </div>
 
-                            {/* Flythrough Viewer Modal */}
+                            {/* Flythrough Viewer Modal (Ken Burns) */}
                             {showFlythrough && (
                               <FlythroughViewer
                                 images={batchResults.map(r => r.generated[0]).filter(Boolean)}
                                 onClose={() => setShowFlythrough(false)}
+                                lang={lang}
+                              />
+                            )}
+
+                            {/* Video Flythrough Modal (AI Generated) */}
+                            {showVideoFlythrough && (
+                              <VideoFlythrough
+                                imageUrls={batchResults.map(r => r.generated[0]).filter(Boolean)}
+                                onClose={() => setShowVideoFlythrough(false)}
                                 lang={lang}
                               />
                             )}
