@@ -1,6 +1,8 @@
 import * as fal from "@fal-ai/serverless-client";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
+import { createClient } from '@supabase/supabase-js';
+import { v4 } from 'uuid';
 
 export async function POST(req: NextRequest) {
     const session = await auth();
@@ -12,6 +14,13 @@ export async function POST(req: NextRequest) {
     if (!process.env.FAL_KEY && process.env.NEXT_PUBLIC_FAL_KEY) {
         process.env.FAL_KEY = process.env.NEXT_PUBLIC_FAL_KEY;
     }
+
+    // Initialize Supabase
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabase = (supabaseUrl && supabaseServiceKey)
+        ? createClient(supabaseUrl, supabaseServiceKey)
+        : null;
 
     try {
         const { startImageUrl, endImageUrl } = await req.json();
@@ -56,8 +65,28 @@ export async function POST(req: NextRequest) {
         const data = result as any;
 
         if (data.video && data.video.url) {
+            const videoUrl = data.video.url;
+
+            // Save to database
+            if (supabase) {
+                const recordId = v4();
+                await supabase.from('real-estate-generations').insert({
+                    id: recordId,
+                    user: session.user.id,
+                    original_image: startImageUrl,
+                    generated_image: JSON.stringify({
+                        type: 'video',
+                        videoUrl: videoUrl,
+                        sourceImages: [startImageUrl, endImageUrl]
+                    }),
+                    style: 'Video Tour',
+                    room_type: 'video'
+                });
+                console.log("Video saved to database:", recordId);
+            }
+
             return NextResponse.json({
-                videoUrl: data.video.url,
+                videoUrl: videoUrl,
                 fileName: data.video.file_name || 'room-tour.mp4',
                 fileSize: data.video.file_size
             });
@@ -73,3 +102,4 @@ export async function POST(req: NextRequest) {
         );
     }
 }
+

@@ -38,6 +38,7 @@ export default function Home() {
   const [batchResults, setBatchResults] = useState<{ original: string; generated: string[] }[]>([]);
   const [showFlythrough, setShowFlythrough] = useState(false);
   const [showVideoFlythrough, setShowVideoFlythrough] = useState(false);
+  const [savedVideoUrl, setSavedVideoUrl] = useState<string | null>(null);
 
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -420,6 +421,7 @@ export default function Home() {
     setError(null);
     setIsProcessing(false);
     setSelectedRoomType('living_room');
+    setSavedVideoUrl(null);
   };
 
   const downloadImage = async (url: string, filename = `staged-room-${Date.now()}.png`) => {
@@ -448,9 +450,19 @@ export default function Home() {
     try {
       const parsed = JSON.parse(gen.generated_image);
 
-      // 1. Check if it's a batch generation
-      if (parsed.isBatch && parsed.results) {
+      // 1. Check if it's a video generation
+      if (parsed.type === 'video' && parsed.videoUrl) {
+        setMode('single');
+        setSavedVideoUrl(parsed.videoUrl);
+        setOriginalImage(parsed.sourceImages?.[0] || gen.original_image);
+        setGeneratedImages([]);
+        setBatchResults([]);
+        setOriginalImages([]);
+      }
+      // 2. Check if it's a batch generation
+      else if (parsed.isBatch && parsed.results) {
         setMode('batch');
+        setSavedVideoUrl(null);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setOriginalImages(parsed.results.map((r: any) => r.original));
         setBatchResults(parsed.results);
@@ -458,8 +470,9 @@ export default function Home() {
         setOriginalImage(null);
         setGeneratedImages([]);
       } else {
-        // 2. Standard Single Generation
+        // 3. Standard Single Generation
         setMode('single');
+        setSavedVideoUrl(null);
         setOriginalImage(gen.original_image);
         if (Array.isArray(parsed)) {
           setGeneratedImages(parsed);
@@ -472,6 +485,7 @@ export default function Home() {
     } catch (e) {
       // Fallback for very old data or errors
       setMode('single');
+      setSavedVideoUrl(null);
       setOriginalImage(gen.original_image);
       setGeneratedImages([gen.generated_image]);
       setBatchResults([]);
@@ -817,7 +831,46 @@ export default function Home() {
                     {mode === 'single' ? (
                       <>
                         <div className="bg-card border rounded-2xl overflow-hidden shadow-2xl min-h-[300px] md:min-h-[500px] flex items-center justify-center relative ring-1 ring-border/50">
-                          {generatedImages.length === 0 ? (
+                          {/* Saved Video Display */}
+                          {savedVideoUrl ? (
+                            <div className="relative w-full h-full min-h-[300px] md:min-h-[500px] flex flex-col items-center justify-center bg-black p-4">
+                              <video
+                                src={savedVideoUrl}
+                                controls
+                                autoPlay
+                                loop
+                                className="max-w-full max-h-[500px] rounded-xl shadow-2xl"
+                              />
+                              <div className="absolute top-4 right-4">
+                                <div className="bg-gradient-to-r from-rose-600 to-pink-600 px-4 py-2 rounded-full shadow-lg text-white text-sm font-medium flex items-center gap-2">
+                                  <Video className="w-4 h-4" />
+                                  Video Tour
+                                </div>
+                              </div>
+                              <Button
+                                className="mt-4 bg-gradient-to-r from-green-600 to-emerald-600"
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(savedVideoUrl);
+                                    const blob = await response.blob();
+                                    const blobUrl = window.URL.createObjectURL(blob);
+                                    const link = document.createElement('a');
+                                    link.href = blobUrl;
+                                    link.download = `room-tour-${Date.now()}.mp4`;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(blobUrl);
+                                  } catch (e) {
+                                    console.error('Download failed:', e);
+                                  }
+                                }}
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                {t.app.download}
+                              </Button>
+                            </div>
+                          ) : generatedImages.length === 0 ? (
                             <div className="relative w-full h-full min-h-[300px] md:min-h-[600px] flex items-center justify-center bg-muted/10">
                               <img
                                 src={originalImage || ''}
