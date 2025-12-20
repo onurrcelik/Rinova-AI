@@ -414,6 +414,7 @@ export default function Home() {
     setSelectedImageIndex(0);
     setImageSize(null);
     setError(null);
+    setIsProcessing(false);
     setSelectedRoomType('living_room');
   };
 
