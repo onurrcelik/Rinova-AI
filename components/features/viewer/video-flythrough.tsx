@@ -15,12 +15,12 @@ interface VideoFlythroughProps {
 const videoTranslations = {
     en: {
         selectTitle: 'Select 2 Images for Video Tour',
-        selectDescription: 'Choose the START and END frames. Pick images that show different parts of the room.',
-        startFrame: 'Start Frame',
-        endFrame: 'End Frame',
+        selectDescription: 'Your video will be generated based on these images. Choose wisely — pick images that show different parts of the room with a common element.',
+        image1: 'Image 1',
+        image2: 'Image 2',
         generateVideo: 'Generate Video',
         generatingTitle: 'Generating AI Video Tour',
-        generatingVideo: 'Creating smooth transition between frames...',
+        generatingVideo: 'Creating cinematic room tour...',
         estimatedTime: 'This may take 60-90 seconds',
         videoReady: 'Your AI Video Tour is Ready!',
         download: 'Download Video',
@@ -32,12 +32,12 @@ const videoTranslations = {
     },
     it: {
         selectTitle: 'Seleziona 2 Immagini per il Video Tour',
-        selectDescription: 'Scegli i fotogrammi INIZIO e FINE. Seleziona immagini che mostrano parti diverse della stanza.',
-        startFrame: 'Fotogramma Iniziale',
-        endFrame: 'Fotogramma Finale',
+        selectDescription: 'Il video verrà generato in base a queste immagini. Scegli con attenzione — seleziona immagini che mostrano parti diverse della stanza con un elemento in comune.',
+        image1: 'Immagine 1',
+        image2: 'Immagine 2',
         generateVideo: 'Genera Video',
         generatingTitle: 'Generazione Video Tour AI',
-        generatingVideo: 'Creazione transizione fluida tra i fotogrammi...',
+        generatingVideo: 'Creazione tour cinematico della stanza...',
         estimatedTime: 'Potrebbe richiedere 60-90 secondi',
         videoReady: 'Il tuo Video Tour AI è Pronto!',
         download: 'Scarica Video',
@@ -151,14 +151,14 @@ export function VideoFlythrough({ imageUrls, onClose, lang = 'en' }: VideoFlythr
             <div className="max-w-5xl w-full">
                 {/* Selection State */}
                 {step === 'selecting' && (
-                    <div className="space-y-6">
-                        <div className="text-center text-white space-y-2">
-                            <h2 className="text-2xl font-bold">{t.selectTitle}</h2>
-                            <p className="text-white/70">{t.selectDescription}</p>
+                    <div className="space-y-8">
+                        <div className="text-center text-white space-y-3">
+                            <h2 className="text-3xl font-bold">{t.selectTitle}</h2>
+                            <p className="text-white/70 text-lg">{t.selectDescription}</p>
                         </div>
 
-                        {/* Image Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Image Grid - Larger 2-column layout */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                             {imageUrls.map((url, index) => {
                                 const isStart = startImageIndex === index;
                                 const isEnd = endImageIndex === index;
@@ -169,10 +169,10 @@ export function VideoFlythrough({ imageUrls, onClose, lang = 'en' }: VideoFlythr
                                         key={index}
                                         onClick={() => handleImageClick(index)}
                                         className={cn(
-                                            "relative aspect-video rounded-xl overflow-hidden border-4 transition-all duration-200",
-                                            isStart && "border-green-500 ring-4 ring-green-500/30",
-                                            isEnd && "border-blue-500 ring-4 ring-blue-500/30",
-                                            !isSelected && "border-white/20 hover:border-white/50"
+                                            "relative aspect-[4/3] rounded-2xl overflow-hidden transition-all duration-300 group",
+                                            isStart && "ring-4 ring-green-500 shadow-[0_0_30px_rgba(34,197,94,0.4)]",
+                                            isEnd && "ring-4 ring-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)]",
+                                            !isSelected && "ring-2 ring-white/20 hover:ring-white/50 hover:shadow-lg"
                                         )}
                                     >
                                         <img
@@ -181,26 +181,36 @@ export function VideoFlythrough({ imageUrls, onClose, lang = 'en' }: VideoFlythr
                                             className="w-full h-full object-cover"
                                         />
 
-                                        {/* Selection overlay */}
+                                        {/* Image number badge */}
+                                        <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white font-bold text-sm">
+                                            {index + 1}
+                                        </div>
+
+                                        {/* Selection badge */}
                                         {isSelected && (
                                             <div className={cn(
-                                                "absolute inset-0 flex items-center justify-center",
-                                                isStart ? "bg-green-500/30" : "bg-blue-500/30"
+                                                "absolute top-3 right-3 px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg",
+                                                isStart ? "bg-green-600" : "bg-blue-600"
                                             )}>
-                                                <div className={cn(
-                                                    "px-3 py-1 rounded-full text-sm font-bold text-white",
-                                                    isStart ? "bg-green-600" : "bg-blue-600"
-                                                )}>
-                                                    {isStart ? t.startFrame : t.endFrame}
-                                                </div>
+                                                {isStart ? `✓ ${t.image1}` : `✓ ${t.image2}`}
                                             </div>
                                         )}
 
-                                        {/* Hover hint when no selection */}
+                                        {/* Hover overlay for unselected */}
                                         {!isSelected && (
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <span className="text-white text-sm">{t.clickToSelect}</span>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
+                                                <span className="text-white text-lg font-medium bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                                                    {t.clickToSelect}
+                                                </span>
                                             </div>
+                                        )}
+
+                                        {/* Selected checkmark overlay */}
+                                        {isSelected && (
+                                            <div className={cn(
+                                                "absolute inset-0 bg-gradient-to-t via-transparent to-transparent",
+                                                isStart ? "from-green-600/30" : "from-blue-600/30"
+                                            )} />
                                         )}
                                     </button>
                                 );
@@ -208,14 +218,14 @@ export function VideoFlythrough({ imageUrls, onClose, lang = 'en' }: VideoFlythr
                         </div>
 
                         {/* Generate Button */}
-                        <div className="flex justify-center">
+                        <div className="flex justify-center pt-4">
                             <Button
                                 onClick={generateVideo}
                                 disabled={startImageIndex === null || endImageIndex === null}
-                                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-lg px-8 py-6 h-auto"
                                 size="lg"
                             >
-                                <Video className="w-5 h-5 mr-2" />
+                                <Video className="w-6 h-6 mr-3" />
                                 {t.generateVideo}
                             </Button>
                         </div>
@@ -290,9 +300,9 @@ export function VideoFlythrough({ imageUrls, onClose, lang = 'en' }: VideoFlythr
                             </Button>
                             <Button
                                 onClick={resetSelection}
-                                variant="outline"
+                                variant="ghost"
                                 size="lg"
-                                className="text-white border-white/30 hover:bg-white/10"
+                                className="border border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
                             >
                                 <RefreshCw className="w-5 h-5 mr-2" />
                                 {t.regenerate}
