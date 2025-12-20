@@ -12,6 +12,7 @@ import { LimitPopup } from '@/components/limit-popup';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { MismatchModal } from '@/components/mismatch-modal';
 import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon } from 'lucide-react';
 import { BatchUploadZone } from '@/components/batch-upload-zone';
 import { cn } from '@/lib/utils';
@@ -44,6 +45,34 @@ export default function Home() {
   const [loadingHistory, setLoadingHistory] = useState(true);
 
   const t = translations[lang];
+
+  // Room Detection State
+  const [detectedType, setDetectedType] = useState<string | null>(null);
+  const [showMismatchModal, setShowMismatchModal] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(false);
+
+  const detectRoomType = async (base64Image: string) => {
+    setIsDetecting(true);
+    setDetectedType(null); // Reset
+    try {
+      const response = await fetch('/api/detect-room', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Image }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.roomType && data.roomType !== 'unknown') {
+          console.log("Detected Room Type:", data.roomType);
+          setDetectedType(data.roomType);
+        }
+      }
+    } catch (error) {
+      console.error("Room detection failed:", error);
+    } finally {
+      setIsDetecting(false);
+    }
+  };
 
   const fetchHistory = async () => {
     try {
@@ -219,6 +248,7 @@ export default function Home() {
         setGeneratedImages([]);
         setSelectedImageIndex(0);
         setError(null);
+        detectRoomType(result);
       }
     };
     reader.onerror = () => setIsProcessing(false);
@@ -253,11 +283,23 @@ export default function Home() {
       setOriginalImages(processed);
       setBatchResults([]);
       setError(null);
+      if (processed.length > 0) {
+        detectRoomType(processed[0]);
+      }
     } catch (e) {
       console.error("Batch processing failed", e);
       setError("Failed to process some images.");
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleGenerateClick = () => {
+    if (detectedType && detectedType !== 'unknown' && detectedType !== selectedRoomType) {
+      setShowMismatchModal(true);
+    } else {
+      if (mode === 'single') handleGenerate();
+      else handleBatchGenerate();
     }
   };
 
@@ -682,11 +724,13 @@ export default function Home() {
                       </div>
 
                       <div className="pt-2 flex flex-col gap-4">
+                        {/* Mismatch Warning Modal */}
+
                         <Button
-                          onClick={mode === 'single' ? handleGenerate : handleBatchGenerate}
-                          disabled={isGenerating || (mode === 'single' ? generatedImages.length > 0 : batchResults.length > 0)}
+                          className="w-full h-14 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] border-0"
                           size="lg"
-                          className="w-full text-lg font-semibold shadow-lg shadow-blue-500/20 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02]"
+                          disabled={isGenerating || isProcessing || (!originalImage && originalImages.length === 0)}
+                          onClick={handleGenerateClick}
                         >
                           {isGenerating ? (
                             <>
@@ -711,11 +755,29 @@ export default function Home() {
                             {t.app.download}
                           </Button>
                         )}
-
-                        <Button variant="ghost" onClick={handleReset} className="w-full h-12 text-muted-foreground hover:text-destructive transition-colors">
-                          {t.app.startOver}
-                        </Button>
                       </div>
+
+                      <MismatchModal
+                        isOpen={showMismatchModal}
+                        onClose={() => {
+                          setShowMismatchModal(false);
+                          // If they close without verifying, maybe just proceed? 
+                          // Or do nothing? "Keep selected" implies proceeding.
+                          if (mode === 'single') handleGenerate(); else handleBatchGenerate();
+                        }}
+                        onConfirm={() => {
+                          if (detectedType) setSelectedRoomType(detectedType);
+                          setShowMismatchModal(false);
+                          // Don't auto-generate, let them see the switch.
+                        }}
+                        detectedType={detectedType || ''}
+                        selectedType={selectedRoomType}
+                        lang={lang}
+                      />
+
+                      <Button variant="ghost" onClick={handleReset} className="w-full h-12 text-muted-foreground hover:text-destructive transition-colors">
+                        {t.app.startOver}
+                      </Button>
 
                       {error && (
                         <div className="p-4 bg-destructive/10 text-destructive rounded-lg text-sm border border-destructive/20 mt-4">
@@ -846,14 +908,12 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </main>
     </div>
-  );
+  )
 }

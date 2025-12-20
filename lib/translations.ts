@@ -48,6 +48,10 @@ export const translations = {
             batchProcessing: "Processing Batch...",
             maxImages: "(Max 4 images)",
             batchConsistencyMsg: "Batch mode generates 1 variation per angle to ensure consistency.",
+            roomMismatchTitle: "Room Type Mismatch",
+            roomMismatchMsg: "We detected this room as a {detected}. You selected {selected}. Results might be poor.",
+            useDetected: "Use {detected}",
+            keepSelected: "Keep {selected}",
         },
         rooms: {
             living_room: "Living Room",
@@ -134,6 +138,10 @@ export const translations = {
             batchProcessing: "Elaborazione in corso...",
             maxImages: "(Massimo 4 immagini)",
             batchConsistencyMsg: "La modalità batch genera 1 variazione per angolo per garantire la coerenza.",
+            roomMismatchTitle: "Tipo di Stanza Non Corrispondente",
+            roomMismatchMsg: "Abbiamo rilevato questa stanza come {detected}. Hai selezionato {selected}. I risultati potrebbero essere scarsi.",
+            useDetected: "Usa {detected}",
+            keepSelected: "Tieni {selected}",
         },
         rooms: {
             living_room: "Soggiorno",
