@@ -149,6 +149,7 @@ export async function POST(req: NextRequest) {
                 image_size: imageSize || "square_hd",
                 negative_prompt: negativePrompt,
                 num_images: numImages,
+                spatial_consistency: "on_structure_match" // Lock depth map for structure preservation
             },
             logs: true,
             onQueueUpdate: (update) => {

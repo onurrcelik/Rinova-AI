@@ -149,7 +149,8 @@ export async function POST(req: NextRequest) {
                     image_size: "square_hd", // or pass param
                     negative_prompt: negativePrompt,
                     num_images: numImagesPerAngle,
-                    seed: consistencySeed // SHARED SEED
+                    seed: consistencySeed, // SHARED SEED
+                    spatial_consistency: "on_structure_match" // Lock depth map for structure preservation
                 },
                 logs: false,
             });
