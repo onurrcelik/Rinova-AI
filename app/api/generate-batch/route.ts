@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         const consistencyConstraint = getDidacticConsistencyPrompts(style, consistencySeed);
 
         // Lighting & Atmosphere
-        const lightingPrompt = "Professional interior design photography lighting, bright natural sunlight, warm ambient fill, 4k detail.";
+        const lightingPrompt = "Cinematic lighting, volumetric atmosphere, dust motes in sunbeams, complex contrast, warm color temperature (3500K), mixed lighting (natural blue daylight vs warm interior tungsten), raytracing shadows, ambient occlusion.";
 
 
         // Strict Spatial Constraint
