@@ -1,4 +1,4 @@
-import { getDidacticConsistencyPrompts } from "../generate/consistency-descriptors";
+
 import * as fal from "@fal-ai/serverless-client";
 import { NextRequest, NextResponse } from "next/server";
 import { stylePrompts, negativePrompt } from "../generate/prompt-utils";
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         const roomLabel = roomType ? roomType.replace(/_/g, ' ') : 'room';
         const styleDescription = stylePrompts[style] || style;
 
-        // Single consistency seed for the whole batch
+        // Single consistency seed for the whole batch (for reproducibility across angles)
         const consistencySeed = Math.floor(Math.random() * 10000000);
 
         // Construct Prompts (Same logic as valid single route)
@@ -82,24 +82,9 @@ export async function POST(req: NextRequest) {
         }
 
 
-
-
-        // Deterministic Consistency Constraint (Furniture, Ligthing, Rugs, Curtains, Decor)
-        const consistencyConstraint = getDidacticConsistencyPrompts(style, consistencySeed);
-
-        // Lighting & Atmosphere
-        const lightingPrompt = "Cinematic lighting, volumetric atmosphere, dust motes in sunbeams, complex contrast, warm color temperature (3500K), mixed lighting (natural blue daylight vs warm interior tungsten), raytracing shadows, ambient occlusion.";
-
-
-        // Strict Spatial Constraint
-        const spatialConstraint = "IMPORTANT: Retain the EXACT position, scale, and layout of all existing furniture. Do NOT move tables, chairs, or sofas. Only change their material, color, and style in place. The geometry of the room and furniture placement must remain 100% identical to the original.";
-
-
+        // Simplified prompt matching the single route for better spatial consistency
         const prompt = `Strictly preserve exact room structure, perspective, and original dimensions. Do NOT change the camera angle or field of view.
-    ${lightingPrompt}
-    ${spatialConstraint}
     Virtual staging of a ${roomLabel} in ${style} style. ${styleDescription}
-    ${consistencyConstraint}
     High quality, photorealistic, interior design, 8k resolution.
     Keep all walls, windows, floors, and ceiling exactly as they are. Only replace movable furniture and decor to match ${style}.
     ${specificPrompt}`;
