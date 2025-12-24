@@ -104,13 +104,8 @@ export async function POST(req: NextRequest) {
     Keep all walls, windows, floors, and ceiling exactly as they are. Only replace movable furniture and decor to match ${style}.
     ${specificPrompt}`;
 
-        // Prepare Supabase
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        let supabase: any = null;
-        if (supabaseUrl && supabaseKey) {
-            supabase = createClient(supabaseUrl, supabaseKey);
-        }
+        // Use supabaseAdmin (service role) for all database/storage operations
+        const supabase = supabaseAdmin;
 
         // --- Process Each Image in Parallel ---
         // We map each image to a promise that handles: Original Upload -> AI Gen -> Result Upload -> DB Insert

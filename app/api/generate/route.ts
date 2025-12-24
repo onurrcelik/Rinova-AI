@@ -92,19 +92,16 @@ export async function POST(req: NextRequest) {
 
         // --- Start Parallel Processes ---
 
-        // 1. Prepare Supabase (if configured)
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        // Use supabaseAdmin (service role) for all database/storage operations
+        const supabase = supabaseAdmin;
         const recordId = v4(); // Keep UUID for Database Primary Key
         let uploadOriginalPromise: Promise<any> = Promise.resolve(null);
         let finalOriginalUrl: string | null = null;
-        let supabase: any = null;
 
         // Variables for storage folder, defined here to be in scope for both original and generated uploads
         let storageFolder: string | null = null;
 
-        if (supabaseUrl && supabaseKey) {
-            supabase = createClient(supabaseUrl, supabaseKey);
+        if (supabase) {
 
             // Create a readable folder name: Style_Room_Date_Time_UUID
             // We append UUID to ensure uniqueness regardless of time/style
