@@ -26,3 +26,9 @@ add column generation_count int default 0;
 -- Then set unlimited = true for specific users:
 -- UPDATE "clients-real-estate" SET unlimited = true WHERE email = 'primacasa@rinovaai.com';
 -- UPDATE "clients-real-estate" SET unlimited = true WHERE email = 'onur5celik8@gmail.com';
+-- Documentation for Role Limits:
+-- paid: Unlimited
+-- admin: Unlimited
+-- trial: 100 generations
+-- general: 3 generations
+COMMENT ON COLUMN "clients-real-estate".role IS 'Role of the user. Limits: paid=Unlimited, admin=Unlimited, trial=100, general=3';
