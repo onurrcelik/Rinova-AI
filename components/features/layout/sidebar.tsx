@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Clock, History, ChevronLeft, ChevronRight, MessageSquare, Trash2 } from 'lucide-react';
+import { Plus, Clock, History, ChevronLeft, ChevronRight, MessageSquare, Trash2, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { translations, Language } from '@/lib/translations';
+import Link from 'next/link';
 
 interface Generation {
     id: string;
@@ -83,7 +84,7 @@ export function Sidebar({
                     isOpen ? "translate-x-0" : "-translate-x-full",
                 )}
             >
-                <div className="p-4 border-b space-y-4">
+                <div className="p-4 border-b space-y-2">
                     <Button
                         onClick={onNewChat}
                         className="w-full justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
@@ -91,6 +92,18 @@ export function Sidebar({
                         <Plus className="w-4 h-4" />
                         {t.app.newDesign}
                     </Button>
+
+                    {userLimit?.role === 'admin' && (
+                        <Link href="/admin" className="block w-full">
+                            <Button
+                                variant="outline"
+                                className="w-full justify-start gap-2 border-dashed border-primary/50 text-primary hover:bg-primary/5"
+                            >
+                                <LayoutDashboard className="w-4 h-4" />
+                                Admin Panel
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2 space-y-2">
