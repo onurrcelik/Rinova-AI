@@ -39,10 +39,10 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (!userError && user) {
-            // paid users have unlimited generations
-            if (user.role !== 'paid') {
+            // paid and admin users have unlimited generations
+            if (user.role !== 'paid' && user.role !== 'admin') {
                 const LIMITS: Record<string, number> = {
-                    admin: 100,
+                    trial: 100,
                     general: 3
                 };
                 const limit = LIMITS[user.role] || LIMITS.general;

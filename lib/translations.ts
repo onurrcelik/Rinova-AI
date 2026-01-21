@@ -55,6 +55,7 @@ export const translations = {
             watchFlythrough: "Watch Flythrough",
             flythroughTitle: "Room Tour",
             generateVideoTour: "Generate AI Video Tour",
+            totalGenerations: "Total Generations",
         },
         rooms: {
             living_room: "Living Room",
@@ -148,6 +149,7 @@ export const translations = {
             watchFlythrough: "Guarda Tour Virtuale",
             flythroughTitle: "Tour della Stanza",
             generateVideoTour: "Genera Video Tour AI",
+            totalGenerations: "Generazioni Totali",
         },
         rooms: {
             living_room: "Soggiorno",

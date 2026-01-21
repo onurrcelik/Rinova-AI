@@ -141,16 +141,16 @@ export function Sidebar({
                         <div className="space-y-2">
                             <div className="flex justify-between text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                 <span>{t.app?.usage || "Usage"}</span>
-                                <span>{userLimit.role === 'admin' ? '∞' : `${userLimit.count} / 3`}</span>
+                                <span>{(userLimit.role === 'admin' || userLimit.role === 'paid') ? '∞' : `${userLimit.count} / ${userLimit.role === 'trial' ? '100' : '3'}`}</span>
                             </div>
-                            {userLimit.role !== 'admin' && (
+                            {(userLimit.role !== 'admin' && userLimit.role !== 'paid') && (
                                 <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
                                     <div
                                         className={cn(
                                             "h-full transition-all duration-500",
                                             userLimit.count >= 3 ? "bg-destructive" : "bg-primary"
                                         )}
-                                        style={{ width: `${Math.min((userLimit.count / 3) * 100, 100)}%` }}
+                                        style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
                                     />
                                 </div>
                             )}

@@ -549,25 +549,30 @@ export default function Home() {
             {/* Usage Limit Display */}
             {userLimit && (
               <div className="flex flex-col items-end mr-2">
-                {userLimit.role === 'admin' ? (
-                  <div className="flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white px-5 py-1.5 rounded-full shadow-xl border border-white/10 ring-1 ring-black/10">
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
-                      {t.app?.limitless || "Usage Limit: Unlimited"}
+                {(userLimit.role === 'admin' || userLimit.role === 'paid') ? (
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center justify-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white px-5 py-1.5 rounded-full shadow-xl border border-white/10 ring-1 ring-black/10">
+                      <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
+                        {t.app?.limitless || "Usage Limit: Unlimited"}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pr-1">
+                      {t.app.totalGenerations}: {userLimit.count}
                     </span>
                   </div>
                 ) : (
                   <div className="w-32 flex flex-col gap-1">
                     <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
                       <span>{t.app?.usage || "Usage"}</span>
-                      <span>{userLimit.count} / 3</span>
+                      <span>{userLimit.count} / {userLimit.role === 'trial' ? '100' : '3'}</span>
                     </div>
                     <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
                       <div
                         className={cn(
                           "h-full transition-all duration-500",
-                          userLimit.count >= 3 ? "bg-destructive" : "bg-primary"
+                          userLimit.count >= (userLimit.role === 'trial' ? 100 : 3) ? "bg-destructive" : "bg-primary"
                         )}
-                        style={{ width: `${Math.min((userLimit.count / 3) * 100, 100)}%` }}
+                        style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
                       />
                     </div>
                   </div>
