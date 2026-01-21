@@ -39,19 +39,20 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (!userError && user) {
-            const LIMITS = {
-                admin: 100,
-                general: 3
-            };
+            // paid users have unlimited generations
+            if (user.role !== 'paid') {
+                const LIMITS: Record<string, number> = {
+                    admin: 100,
+                    general: 3
+                };
+                const limit = LIMITS[user.role] || LIMITS.general;
 
-            const userRole = (user.role as keyof typeof LIMITS) || 'general';
-            const limit = LIMITS[userRole] || LIMITS.general;
-
-            if (user.generation_count >= limit) {
-                return NextResponse.json({
-                    error: `Generation limit reached (${user.generation_count}/${limit}). Please contact support to upgrade.`,
-                    code: 'LIMIT_REACHED'
-                }, { status: 403 });
+                if (user.generation_count >= limit) {
+                    return NextResponse.json({
+                        error: `Generation limit reached (${user.generation_count}/${limit}). Please contact support to upgrade.`,
+                        code: 'LIMIT_REACHED'
+                    }, { status: 403 });
+                }
             }
         }
 

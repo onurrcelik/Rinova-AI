@@ -20,3 +20,9 @@ using (true);
 alter table "clients-real-estate" 
 add column role text default 'general',
 add column generation_count int default 0;
+
+-- Add unlimited column for users with no generation limits
+-- Run this migration: ALTER TABLE "clients-real-estate" ADD COLUMN unlimited boolean DEFAULT false;
+-- Then set unlimited = true for specific users:
+-- UPDATE "clients-real-estate" SET unlimited = true WHERE email = 'primacasa@rinovaai.com';
+-- UPDATE "clients-real-estate" SET unlimited = true WHERE email = 'onur5celik8@gmail.com';

@@ -39,24 +39,21 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (!userError && user) {
-            const LIMITS = { admin: 100, general: 10 }; // Increased limit potential for batch?? Or stick to standard?
-            // User requested NO logic change. Standard users have limit of 3.
-            // Batch generation of 3 images counts as 3 generations or 1 "batch"?
-            // Plan said: "treat each Angle as a separate generation".
-            // So if I upload 3 images, I valid cost is 3.
+            // paid users have unlimited generations
+            if (user.role !== 'paid') {
+                const LIMITS: Record<string, number> = {
+                    admin: 100,
+                    general: 3
+                };
+                const limit = LIMITS[user.role] || LIMITS.general;
+                const cost = images.length * numImagesPerAngle;
 
-            const limit = user.role === 'admin' ? 100 : 3;
-            // Calculate how many we are about to generate
-            // Actually, for batch mode, usually we might generate 1 variation per angle to keep it sane, or multiple.
-            // Let's assume 1 variation per angle per batch request for now to save quota, or use numImagesPerAngle.
-            // Default numImagesPerAngle = 1.
-            const cost = images.length * numImagesPerAngle;
-
-            if ((user.generation_count + cost) > limit) {
-                return NextResponse.json({
-                    error: `Generation limit reached. This batch requires ${cost} credits, you have ${limit - user.generation_count} left.`,
-                    code: 'LIMIT_REACHED'
-                }, { status: 403 });
+                if ((user.generation_count + cost) > limit) {
+                    return NextResponse.json({
+                        error: `Generation limit reached. This batch requires ${cost} credits, you have ${limit - user.generation_count} left.`,
+                        code: 'LIMIT_REACHED'
+                    }, { status: 403 });
+                }
             }
         }
 
