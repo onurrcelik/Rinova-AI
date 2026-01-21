@@ -4,10 +4,15 @@ import { createClient } from '@supabase/supabase-js';
 import { auth } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseAdmin() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Missing Supabase env variables');
+  }
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+}
 
 async function checkAdmin() {
   const session = await auth();
@@ -18,9 +23,10 @@ async function checkAdmin() {
 
 export async function getAdminStats() {
   await checkAdmin();
+  const supabaseAdmin = getSupabaseAdmin();
 
   // Get users count
-  const { count: usersCount, error: usersError } = await supabaseAdmin
+  const { count: usersCount, error: usersError } = await getSupabaseAdmin()
     .from('clients-real-estate')
     .select('*', { count: 'exact', head: true });
 
@@ -29,7 +35,7 @@ export async function getAdminStats() {
   // Get total generations count
   // We can sum the generation_count column from clients or count the generations table
   // Let's count the generations table for accuracy if it tracks all generations
-  const { count: generationsCount, error: generationsError } = await supabaseAdmin
+  const { count: generationsCount, error: generationsError } = await getSupabaseAdmin()
     .from('real-estate-generations')
     .select('*', { count: 'exact', head: true });
 
@@ -47,7 +53,7 @@ export async function getAdminStats() {
 export async function getUsers() {
   await checkAdmin();
 
-  const { data: users, error } = await supabaseAdmin
+  const { data: users, error } = await getSupabaseAdmin()
     .from('clients-real-estate')
     .select('*') // This will now include subscription_renewal_day if the column exists
     .order('created_at', { ascending: false });
@@ -60,7 +66,7 @@ export async function getUsers() {
 
   // We do this in a separate query to get counts efficiently
   // Alternatively we could use a join if we had a view, but simple query is fine
-  const { data: recentGenerations, error: genError } = await supabaseAdmin
+  const { data: recentGenerations, error: genError } = await getSupabaseAdmin()
     .from('real-estate-generations')
     .select('user')
     .gte('created_at', oneDayAgo.toISOString());
@@ -84,7 +90,7 @@ export async function getUsers() {
 export async function getRecentGenerations(limit = 50) {
   await checkAdmin();
 
-  const { data: generations, error } = await supabaseAdmin
+  const { data: generations, error } = await getSupabaseAdmin()
     .from('real-estate-generations')
     .select('*, user_data:clients-real-estate(email)')
     .order('created_at', { ascending: false })
@@ -102,7 +108,7 @@ export async function getRecentGenerations(limit = 50) {
 export async function updateUserRole(userId: string, role: string) {
   await checkAdmin();
 
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from('clients-real-estate')
     .update({ role })
     .eq('id', userId);
@@ -114,7 +120,7 @@ export async function updateUserRole(userId: string, role: string) {
 export async function resetGenerationCount(userId: string) {
   await checkAdmin();
 
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from('clients-real-estate')
     .update({ generation_count: 0 })
     .eq('id', userId);
@@ -130,7 +136,7 @@ export async function updateSubscriptionRenewalDay(userId: string, day: number) 
     throw new Error('Day must be between 1 and 31');
   }
 
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from('clients-real-estate')
     .update({ subscription_renewal_day: day })
     .eq('id', userId);
@@ -146,7 +152,7 @@ export async function getGenerationStats() {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const { data: generations, error } = await supabaseAdmin
+  const { data: generations, error } = await getSupabaseAdmin()
     .from('real-estate-generations')
     .select('created_at, style, room_type')
     .gte('created_at', thirtyDaysAgo.toISOString());
