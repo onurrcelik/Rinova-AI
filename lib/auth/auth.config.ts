@@ -11,7 +11,7 @@ export const authConfig = {
             const isOnRegister = nextUrl.pathname.startsWith('/register');
 
             if (isOnLogin || isOnRegister) {
-                if (isLoggedIn) return Response.redirect(new URL('/', nextUrl));
+                if (isLoggedIn) return Response.redirect(new URL('/dashboard', nextUrl));
                 return true; // Always allow access to login and register pages
             }
 
@@ -20,7 +20,7 @@ export const authConfig = {
                 if (!isLoggedIn) return false;
                 // @ts-ignore
                 if (auth?.user?.role !== 'admin') {
-                     return Response.redirect(new URL('/', nextUrl));
+                    return Response.redirect(new URL('/dashboard', nextUrl));
                 }
                 return true;
             }

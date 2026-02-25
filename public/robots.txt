@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /plans
+Allow: /pricing
+Allow: /about
+Allow: /features
+
+Disallow: /dashboard
+Disallow: /app
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://rinova.capmapai.com/sitemap.xml

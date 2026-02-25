@@ -1,0 +1,23 @@
+# Rinova AI
+> AI-powered real estate photo enhancement tool
+
+Rinova AI instantly uplifts real estate listing photos using artificial intelligence.
+Upload property photos and receive professional-quality enhanced images in seconds.
+Supports single-room enhancements, multi-angle batch projects, and AI-generated video flythroughs.
+
+## Product
+- [Home](https://rinova.capmapai.com/)
+- [Plans & Pricing](https://rinova.capmapai.com/plans)
+- [Sign Up](https://rinova.capmapai.com/register)
+- [Sign In](https://rinova.capmapai.com/login)
+
+## Features
+- AI virtual staging in multiple styles (Modern, Scandinavian, Industrial, Bohemian, Minimalist, Contemporary)
+- Automatic room type detection
+- Batch multi-angle project processing
+- AI video flythrough generation
+- HEIC / iPhone photo support
+- Instant download of enhanced images
+
+## Company
+Rinova AI is a SaaS product by CapMap AI — https://capmapai.com

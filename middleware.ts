@@ -4,6 +4,16 @@ import { authConfig } from '@/lib/auth/auth.config';
 export default NextAuth(authConfig).auth;
 
 export const config = {
-    // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
-    matcher: ['/((?!api/webhook|api|_next/static|_next/image|.*\\.png$).*)'],
+    // Only protect authenticated app routes.
+    // Public routes (/, /login, /register, /plans, /robots.txt, /sitemap.xml, /llms.txt, etc.)
+    // are intentionally excluded so Google and AI crawlers can access them.
+    matcher: [
+        '/dashboard/:path*',
+        '/dashboard',
+        '/admin/:path*',
+        '/app/:path*',
+        '/settings/:path*',
+        // Protect all API routes EXCEPT auth endpoints and webhooks
+        '/api/((?!auth|webhook).*)',
+    ],
 };

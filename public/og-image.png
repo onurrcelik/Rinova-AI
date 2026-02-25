@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1117"/>
+      <stop offset="100%" style="stop-color:#161B28"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563EB"/>
+      <stop offset="100%" style="stop-color:#6366F1"/>
+    </linearGradient>
+    <linearGradient id="pill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1D3057;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1E2A4A;stop-opacity:1"/>
+    </linearGradient>
+    <clipPath id="roundedRight">
+      <rect x="640" y="40" width="530" height="550" rx="20"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Top accent bar -->
+  <rect x="0" y="0" width="1200" height="5" fill="url(#accent)"/>
+
+  <!-- Left content area -->
+  <!-- Logo mark: small blue square + "Rinova AI" -->
+  <rect x="60" y="70" width="10" height="10" rx="2" fill="url(#accent)"/>
+  <rect x="75" y="70" width="10" height="10" rx="2" fill="#6366F1" opacity="0.7"/>
+  <rect x="60" y="85" width="10" height="10" rx="2" fill="#6366F1" opacity="0.5"/>
+  <rect x="75" y="85" width="10" height="10" rx="2" fill="url(#accent)" opacity="0.4"/>
+  <text x="100" y="84" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="white" letter-spacing="1">Rinova AI</text>
+
+  <!-- Main headline -->
+  <text x="60" y="210" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="white">AI-Powered</text>
+  <text x="60" y="278" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="white">Real Estate</text>
+  <text x="60" y="346" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800">
+    <tspan fill="url(#accent)">Photo Enhancement</tspan>
+  </text>
+
+  <!-- Subtitle -->
+  <text x="60" y="400" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#94A3B8" font-weight="400">Professional virtual staging with AI, in seconds.</text>
+
+  <!-- Feature pills -->
+  <!-- Pill 1 -->
+  <rect x="60" y="440" width="154" height="36" rx="18" fill="url(#pill)" stroke="#2563EB" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="137" y="463" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#93C5FD" text-anchor="middle" font-weight="500">✦ Virtual Staging</text>
+  <!-- Pill 2 -->
+  <rect x="224" y="440" width="158" height="36" rx="18" fill="url(#pill)" stroke="#6366F1" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="303" y="463" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#A5B4FC" text-anchor="middle" font-weight="500">⬡ Batch Processing</text>
+  <!-- Pill 3 -->
+  <rect x="392" y="440" width="168" height="36" rx="18" fill="url(#pill)" stroke="#6366F1" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="476" y="463" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#A5B4FC" text-anchor="middle" font-weight="500">▶ Video Flythrough</text>
+
+  <!-- Domain -->
+  <text x="60" y="555" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#475569" font-weight="500">rinova.capmapai.com</text>
+
+  <!-- Right panel: Before/After room visualization -->
+  <!-- Card background -->
+  <rect x="640" y="40" width="530" height="550" rx="20" fill="#1A2232"/>
+  <!-- Top bar "Before / After" -->
+  <rect x="640" y="40" width="265" height="550" rx="0" fill="#131A26" clip-path="url(#roundedRight)"/>
+
+  <!-- Before label -->
+  <rect x="655" y="58" width="66" height="24" rx="12" fill="#0F172A"/>
+  <text x="688" y="74" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#64748B" text-anchor="middle" font-weight="600">BEFORE</text>
+
+  <!-- Empty room illustration (simplified) -->
+  <!-- Floor -->
+  <polygon points="660,500 900,500 880,380 680,380" fill="#1C2333" opacity="0.9"/>
+  <!-- Back wall -->
+  <rect x="680" y="200" width="200" height="180" fill="#1E2740"/>
+  <!-- Window -->
+  <rect x="720" y="220" width="80" height="100" fill="#243351" stroke="#2D4070" stroke-width="1"/>
+  <line x1="760" y1="220" x2="760" y2="320" stroke="#2D4070" stroke-width="1"/>
+  <line x1="720" y1="270" x2="800" y2="270" stroke="#2D4070" stroke-width="1"/>
+  <!-- Left wall -->
+  <polygon points="660,200 680,200 680,380 660,420" fill="#1A2235"/>
+
+  <!-- After label -->
+  <rect x="915" y="58" width="60" height="24" rx="12" fill="#1E3A5F"/>
+  <text x="945" y="74" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#60A5FA" text-anchor="middle" font-weight="600">AFTER</text>
+
+  <!-- Enhanced room (right side) with furniture -->
+  <!-- Floor warm -->
+  <polygon points="905,500 1150,500 1150,380 905,380" fill="#2A1F14" opacity="0.85"/>
+  <!-- Back wall warm -->
+  <rect x="905" y="200" width="215" height="180" fill="#1C1812"/>
+  <!-- Window with light -->
+  <rect x="945" y="220" width="80" height="100" fill="#FDE68A" opacity="0.3" stroke="#F59E0B" stroke-width="1"/>
+  <rect x="985" y="220" width="80" height="100" fill="#FDE68A" opacity="0.2"/>
+  <!-- Warm light glow -->
+  <ellipse cx="1050" cy="310" rx="100" ry="80" fill="#F59E0B" opacity="0.04"/>
+  <!-- Sofa -->
+  <rect x="930" y="390" width="160" height="60" rx="8" fill="#4A3728"/>
+  <rect x="930" y="380" width="160" height="20" rx="4" fill="#5C4535"/>
+  <rect x="928" y="380" width="16" height="70" rx="4" fill="#5C4535"/>
+  <rect x="1074" y="380" width="16" height="70" rx="4" fill="#5C4535"/>
+  <!-- Cushions -->
+  <rect x="942" y="385" width="40" height="30" rx="4" fill="#6B5040"/>
+  <rect x="990" y="385" width="40" height="30" rx="4" fill="#6B5040"/>
+  <rect x="1038" y="385" width="40" height="30" rx="4" fill="#6B5040"/>
+  <!-- Coffee table -->
+  <rect x="960" y="455" width="90" height="30" rx="4" fill="#3D2B1A"/>
+  <!-- Plant -->
+  <rect x="910" y="430" width="8" height="40" rx="2" fill="#4A3728"/>
+  <ellipse cx="914" cy="428" rx="14" ry="20" fill="#1A4731"/>
+  <ellipse cx="907" cy="420" rx="10" ry="16" fill="#1F5A3A"/>
+  <!-- Lamp -->
+  <rect x="1125" y="360" width="6" height="60" rx="2" fill="#8B7355"/>
+  <ellipse cx="1128" cy="356" rx="20" ry="10" fill="#F59E0B" opacity="0.6"/>
+  <ellipse cx="1128" cy="356" rx="20" ry="10" fill="none" stroke="#F59E0B" stroke-width="1" opacity="0.4"/>
+
+  <!-- Divider line between before/after -->
+  <line x1="905" y1="40" x2="905" y2="590" stroke="#2563EB" stroke-width="2" stroke-dasharray="6,4" opacity="0.7"/>
+  <!-- Divider icon -->
+  <circle cx="905" cy="315" r="16" fill="#0D1117" stroke="#2563EB" stroke-width="2"/>
+  <text x="905" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#2563EB" text-anchor="middle">⟷</text>
+</svg>
