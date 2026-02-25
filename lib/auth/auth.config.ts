@@ -18,7 +18,6 @@ export const authConfig = {
             const isAdminRoute = nextUrl.pathname.startsWith('/admin');
             if (isAdminRoute) {
                 if (!isLoggedIn) return false;
-                // @ts-ignore
                 if (auth?.user?.role !== 'admin') {
                     return Response.redirect(new URL('/dashboard', nextUrl));
                 }
@@ -29,10 +28,9 @@ export const authConfig = {
 
             return false; // Redirect unauthenticated users to login page
         },
-        // @ts-ignore
         async session({ session, token }) {
             if (token && session.user) {
-                // @ts-ignore
+                // @ts-expect-error — role added to token
                 session.user.role = token.role;
             }
             return session;

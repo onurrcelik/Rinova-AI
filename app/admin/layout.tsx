@@ -14,7 +14,7 @@ export default async function AdminLayout({
   const session = await auth();
 
   if (!session?.user || session.user.role !== 'admin') {
-    redirect('/');
+    redirect('/dashboard');
   }
 
   return (
@@ -22,7 +22,7 @@ export default async function AdminLayout({
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
           <div className="flex gap-6 md:gap-10">
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/dashboard" className="flex items-center space-x-2">
               <span className="inline-block font-bold">Rinova Admin</span>
             </Link>
             <nav className="flex gap-6">
@@ -35,15 +35,15 @@ export default async function AdminLayout({
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-             <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to App
-                </Button>
-             </Link>
-             <div className="text-sm text-muted-foreground border-l pl-4 ml-2">
-                {session.user.email}
-             </div>
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to App
+              </Button>
+            </Link>
+            <div className="text-sm text-muted-foreground border-l pl-4 ml-2">
+              {session.user.email}
+            </div>
           </div>
         </div>
       </header>
