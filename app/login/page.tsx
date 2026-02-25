@@ -13,7 +13,7 @@ function LoginForm() {
     const t = translations[lang];
 
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/';
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
     const [errorMessage, formAction, isPending] = useActionState(
         authenticate,
         undefined,
