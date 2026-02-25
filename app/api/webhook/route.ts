@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe, getWebhookSecret } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
+// Force dynamic rendering — this route reads raw request body and Stripe env vars at runtime
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');

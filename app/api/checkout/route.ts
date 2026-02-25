@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { stripe } from '@/lib/stripe';
 
+export const dynamic = 'force-dynamic';
+
 function resolvePriceId(plan: string): string | null {
     const isProduction = process.env.RACK_ENV === 'production';
 
