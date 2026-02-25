@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { translations, Language } from '@/lib/translations';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 
-export default function PlansPage() {
+function PlansContent() {
     const [lang, setLang] = useState<Language>('it');
     const [userRole, setUserRole] = useState<string>('general');
     const [loading, setLoading] = useState<string | null>(null);
@@ -261,5 +261,13 @@ export default function PlansPage() {
                 )}
             </main>
         </div>
+    );
+}
+
+export default function PlansPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <PlansContent />
+        </Suspense>
     );
 }
