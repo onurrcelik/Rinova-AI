@@ -28,7 +28,7 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/60">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-            <Link href="/plans" className="hover:text-white transition-colors">Pricing</Link>
+            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           </nav>
           <div className="flex items-center gap-3">
             <Link
@@ -151,6 +151,78 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section id="pricing" className="max-w-6xl mx-auto px-6 py-20">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Simple, transparent pricing</h2>
+        <p className="text-white/50 text-center mb-14 text-lg">No hidden fees. Cancel any time.</p>
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+
+          {/* Weekly */}
+          <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8 flex flex-col gap-6 hover:border-white/[0.15] transition-all">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                <span className="font-bold text-lg">Weekly</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-5xl font-black">€15</span>
+                <span className="text-white/40 text-sm">/ week</span>
+              </div>
+            </div>
+            <ul className="space-y-3 flex-1">
+              {['Unlimited AI enhancements', 'Batch processing', 'All 6 staging styles', 'Video flythrough', 'Priority support'].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-white/60">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400 flex-shrink-0"><polyline points="20 6 9 17 4 12" /></svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/register"
+              className="block text-center border border-white/20 hover:border-white/40 text-white font-semibold px-6 py-3 rounded-full transition-all hover:bg-white/5"
+            >
+              Get started
+            </Link>
+          </div>
+
+          {/* Monthly */}
+          <div className="relative bg-gradient-to-b from-blue-600/20 to-indigo-600/10 border border-blue-500/30 rounded-2xl p-8 flex flex-col gap-6 shadow-xl shadow-blue-900/20">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
+                Best value
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-400"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /><path d="M19 3v4" /><path d="M21 5h-4" /></svg>
+                <span className="font-bold text-lg">Monthly</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-5xl font-black">€50</span>
+                <span className="text-white/40 text-sm">/ month</span>
+              </div>
+              <p className="text-blue-300/70 text-xs mt-1">Save ~17% vs weekly</p>
+            </div>
+            <ul className="space-y-3 flex-1">
+              {['Unlimited AI enhancements', 'Batch processing', 'All 6 staging styles', 'Video flythrough', 'Priority support'].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-white/70">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400 flex-shrink-0"><polyline points="20 6 9 17 4 12" /></svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/register"
+              className="block text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg shadow-blue-900/30"
+            >
+              Get started free
+            </Link>
+          </div>
+
+        </div>
+        <p className="text-center text-white/30 text-sm mt-8">No credit card required to sign up · Cancel any time</p>
+      </section>
+
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-6 py-24 text-center">
         <h2 className="text-4xl md:text-5xl font-black mb-6">
@@ -183,7 +255,7 @@ export default function LandingPage() {
           <div className="flex gap-6">
             <Link href="/login" className="hover:text-white/60 transition-colors">Sign in</Link>
             <Link href="/register" className="hover:text-white/60 transition-colors">Register</Link>
-            <Link href="/plans" className="hover:text-white/60 transition-colors">Pricing</Link>
+            <a href="#pricing" className="hover:text-white/60 transition-colors">Pricing</a>
           </div>
           <p>© {new Date().getFullYear()} Rinova AI · rinova.capmapai.com</p>
         </div>

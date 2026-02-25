@@ -556,9 +556,20 @@ export default function Home() {
                         {t.app?.limitless || "Usage Limit: Unlimited"}
                       </span>
                     </div>
-                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pr-1">
-                      {t.app.totalGenerations}: {userLimit.count}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pr-1">
+                        {t.app.totalGenerations}: {userLimit.count}
+                      </span>
+                      <a href="/plans">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 px-2 text-[10px] font-semibold text-muted-foreground hover:text-foreground"
+                        >
+                          {t.plans?.manageSub || "Manage Plan"}
+                        </Button>
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
