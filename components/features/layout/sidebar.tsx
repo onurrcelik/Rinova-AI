@@ -157,15 +157,25 @@ export function Sidebar({
                                 <span>{(userLimit.role === 'admin' || userLimit.role === 'paid') ? '∞' : `${userLimit.count} / ${userLimit.role === 'trial' ? '100' : '3'}`}</span>
                             </div>
                             {(userLimit.role !== 'admin' && userLimit.role !== 'paid') && (
-                                <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
-                                    <div
-                                        className={cn(
-                                            "h-full transition-all duration-500",
-                                            userLimit.count >= 3 ? "bg-destructive" : "bg-primary"
-                                        )}
-                                        style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
-                                    />
-                                </div>
+                                <>
+                                    <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
+                                        <div
+                                            className={cn(
+                                                "h-full transition-all duration-500",
+                                                userLimit.count >= 3 ? "bg-destructive" : "bg-primary"
+                                            )}
+                                            style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                    <a href="/plans" className="block mt-2">
+                                        <Button
+                                            size="sm"
+                                            className="w-full h-8 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md"
+                                        >
+                                            {t.plans?.changePlan || "Cambia Piano"}
+                                        </Button>
+                                    </a>
+                                </>
                             )}
                         </div>
                     )}

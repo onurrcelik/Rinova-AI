@@ -561,20 +561,30 @@ export default function Home() {
                     </span>
                   </div>
                 ) : (
-                  <div className="w-32 flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
-                      <span>{t.app?.usage || "Usage"}</span>
-                      <span>{userLimit.count} / {userLimit.role === 'trial' ? '100' : '3'}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 flex flex-col gap-1">
+                      <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                        <span>{t.app?.usage || "Usage"}</span>
+                        <span>{userLimit.count} / {userLimit.role === 'trial' ? '100' : '3'}</span>
+                      </div>
+                      <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
+                        <div
+                          className={cn(
+                            "h-full transition-all duration-500",
+                            userLimit.count >= (userLimit.role === 'trial' ? 100 : 3) ? "bg-destructive" : "bg-primary"
+                          )}
+                          style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden border border-border/50">
-                      <div
-                        className={cn(
-                          "h-full transition-all duration-500",
-                          userLimit.count >= (userLimit.role === 'trial' ? 100 : 3) ? "bg-destructive" : "bg-primary"
-                        )}
-                        style={{ width: `${Math.min((userLimit.count / (userLimit.role === 'trial' ? 100 : 3)) * 100, 100)}%` }}
-                      />
-                    </div>
+                    <a href="/plans">
+                      <Button
+                        size="sm"
+                        className="h-8 px-3 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md hover:shadow-lg transition-all hover:scale-105"
+                      >
+                        {t.plans?.changePlan || "Change Plan"}
+                      </Button>
+                    </a>
                   </div>
                 )}
               </div>
