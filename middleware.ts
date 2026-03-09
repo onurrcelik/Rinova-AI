@@ -4,10 +4,13 @@ import { authConfig } from '@/lib/auth/auth.config';
 export default NextAuth(authConfig).auth;
 
 export const config = {
-    // Only protect authenticated app routes.
-    // Public routes (/, /login, /register, /plans, /robots.txt, /sitemap.xml, /llms.txt, etc.)
-    // are intentionally excluded so Google and AI crawlers can access them.
+    // Run middleware on public landing routes so authenticated users get
+    // redirected to the dashboard, and on all protected app routes.
     matcher: [
+        '/',           // Landing page — redirect logged-in users to /dashboard
+        '/login',
+        '/register',
+        '/plans',
         '/dashboard/:path*',
         '/dashboard',
         '/admin/:path*',

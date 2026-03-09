@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { MismatchModal } from '@/components/features/layout/mismatch-modal';
-import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play, Video } from 'lucide-react';
+import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play, Video, Settings } from 'lucide-react';
 import { BatchUploadZone } from '@/components/features/upload/batch-upload-zone';
 import { cn } from '@/lib/utils';
 import { translations, Language } from '@/lib/translations';
@@ -560,15 +560,6 @@ export default function Home() {
                       <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide pr-1">
                         {t.app.totalGenerations}: {userLimit.count}
                       </span>
-                      <a href="/plans">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 px-2 text-[10px] font-semibold text-muted-foreground hover:text-foreground"
-                        >
-                          {t.plans?.manageSub || "Manage Plan"}
-                        </Button>
-                      </a>
                     </div>
                   </div>
                 ) : (
@@ -801,237 +792,7 @@ export default function Home() {
                           </Button>
                         )}
                       </div>
-
-                      <MismatchModal
-                        isOpen={showMismatchModal}
-                        onClose={() => {
-                          setShowMismatchModal(false);
-                          // If they close without verifying, maybe just proceed? 
-                          // Or do nothing? "Keep selected" implies proceeding.
-                          if (mode === 'single') handleGenerate(); else handleBatchGenerate();
-                        }}
-                        onConfirm={() => {
-                          if (detectedType) setSelectedRoomType(detectedType);
-                          setShowMismatchModal(false);
-                          // Don't auto-generate, let them see the switch.
-                        }}
-                        detectedType={detectedType || ''}
-                        selectedType={selectedRoomType}
-                        lang={lang}
-                      />
-
-                      <Button variant="ghost" onClick={handleReset} className="w-full h-12 text-muted-foreground hover:text-destructive transition-colors">
-                        {t.app.startOver}
-                      </Button>
-
-                      {error && (
-                        <div className="p-4 bg-destructive/10 text-destructive rounded-lg text-sm border border-destructive/20 mt-4">
-                          {errorCode === 'LIMIT_REACHED' ? (
-                            <div className="flex flex-col gap-3">
-                              <div className="flex items-center gap-2 font-semibold">
-                                <span>⚠️</span>
-                                {t.app.limitReachedError}
-                              </div>
-                              <div className="pl-6 flex flex-col gap-2 text-destructive/90">
-                                <p className="font-medium bg-background/50 w-fit px-3 py-1 rounded-md border border-destructive/10">
-                                  {t.app.contactSupport}
-                                </p>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-bold text-green-600">WhatsApp:</span>
-                                  <span>{t.app.whatsappContact}</span>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold">Error:</span> {error}
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </Card>
-                  </div>
-
-                  {/* Viewer Panel */}
-                  <div className="flex flex-col gap-6" ref={resultsRef}>
-                    {mode === 'single' ? (
-                      <>
-                        <div className="bg-card border rounded-2xl overflow-hidden shadow-2xl min-h-[300px] md:min-h-[500px] flex items-center justify-center relative ring-1 ring-border/50">
-                          {/* Saved Video Display */}
-                          {savedVideoUrl ? (
-                            <div className="relative w-full h-full min-h-[300px] md:min-h-[500px] flex flex-col items-center justify-center bg-black p-4">
-                              <video
-                                src={savedVideoUrl}
-                                controls
-                                autoPlay
-                                loop
-                                className="max-w-full max-h-[500px] rounded-xl shadow-2xl"
-                              />
-                              <div className="absolute top-4 right-4">
-                                <div className="bg-gradient-to-r from-rose-600 to-pink-600 px-4 py-2 rounded-full shadow-lg text-white text-sm font-medium flex items-center gap-2">
-                                  <Video className="w-4 h-4" />
-                                  Video Tour
-                                </div>
-                              </div>
-                              <Button
-                                className="mt-4 bg-gradient-to-r from-green-600 to-emerald-600"
-                                onClick={async () => {
-                                  try {
-                                    const response = await fetch(savedVideoUrl);
-                                    const blob = await response.blob();
-                                    const blobUrl = window.URL.createObjectURL(blob);
-                                    const link = document.createElement('a');
-                                    link.href = blobUrl;
-                                    link.download = `room-tour-${Date.now()}.mp4`;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    window.URL.revokeObjectURL(blobUrl);
-                                  } catch (e) {
-                                    console.error('Download failed:', e);
-                                  }
-                                }}
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                {t.app.download}
-                              </Button>
-                            </div>
-                          ) : generatedImages.length === 0 ? (
-                            <div className="relative w-full h-full min-h-[300px] md:min-h-[600px] flex items-center justify-center bg-muted/10">
-                              <img
-                                src={originalImage || ''}
-                                alt="Original"
-                                className="max-w-full max-h-[700px] h-auto w-auto object-contain drop-shadow-xl"
-                              />
-                              {!isGenerating && (
-                                <div className="absolute top-4 right-4 animate-in fade-in duration-300">
-                                  <div className="bg-background/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-white/20 text-sm font-medium flex items-center gap-2">
-                                    {t.app.originalPreview}
-                                  </div>
-                                </div>
-                              )}
-                              <LoadingOverlay isVisible={isGenerating} lang={lang} />
-                            </div>
-                          ) : (
-                            <ComparisonViewer
-                              beforeImage={originalImage || ''}
-                              afterImage={generatedImages[selectedImageIndex]}
-                              originalLabel={t.app.originalLabel}
-                            />
-                          )}
-                        </div>
-
-                        {/* Thumbnails */}
-                        {generatedImages.length > 1 && (
-                          <div className="grid grid-cols-4 gap-4 animate-in slide-in-from-bottom-4 duration-500 delay-100">
-                            {generatedImages.map((img, i) => (
-                              <div
-                                key={i}
-                                className={cn(
-                                  "cursor-pointer rounded-xl overflow-hidden border-2 transition-all h-28 relative hover:scale-[1.03] hover:shadow-lg",
-                                  selectedImageIndex === i ? "border-primary ring-4 ring-primary/10 shadow-xl scale-[1.03]" : "border-transparent opacity-60 hover:opacity-100 grayscale hover:grayscale-0"
-                                )}
-                                onClick={() => setSelectedImageIndex(i)}
-                              >
-                                <img
-                                  src={img}
-                                  alt={`Variation ${i + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      // Batch Results View
-                      <div className="space-y-8 min-h-[600px] relative">
-                        {batchResults.length === 0 ? (
-                          <div className="grid grid-cols-2 gap-4">
-                            {originalImages.map((img, idx) => (
-                              <div key={idx} className="bg-card border rounded-xl overflow-hidden relative shadow-sm h-64 flex items-center justify-center bg-muted/10">
-                                <img src={img} className="max-w-full max-h-full object-contain" />
-                                <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">{t.app.angle} {idx + 1}</div>
-                              </div>
-                            ))}
-                            <LoadingOverlay isVisible={isGenerating} lang={lang} />
-                          </div>
-                        ) : (
-                          <div className="space-y-8">
-                            {/* Flythrough Buttons */}
-                            <div className="flex justify-center gap-4 flex-wrap">
-                              <Button
-                                onClick={() => setShowFlythrough(true)}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                                size="lg"
-                              >
-                                <Play className="w-5 h-5 mr-2" />
-                                {t.app.watchFlythrough}
-                              </Button>
-                              <Button
-                                onClick={() => setShowVideoFlythrough(true)}
-                                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                                size="lg"
-                              >
-                                <Video className="w-5 h-5 mr-2" />
-                                {t.app.generateVideoTour}
-                              </Button>
-                            </div>
-
-                            {/* Batch Results Grid */}
-                            <div className="space-y-12">
-                              {batchResults.map((result, idx) => (
-                                <div key={idx} className="space-y-4">
-                                  <h3 className="text-lg font-bold text-muted-foreground flex items-center gap-2">
-                                    <SingleImageIcon className="w-5 h-5" /> {t.app.angle} {idx + 1}
-                                  </h3>
-                                  <div className="h-[400px] bg-card border rounded-2xl overflow-hidden shadow-lg ring-1 ring-border/50 relative group">
-                                    <ComparisonViewer
-                                      beforeImage={result.original}
-                                      afterImage={result.generated[0]}
-                                      originalLabel={`${t.app.originalLabel} (${t.app.angle} ${idx + 1})`}
-                                    />
-                                    {/* Save Button for Batch Result */}
-                                    {result.generated[0] && (
-                                      <Button
-                                        size="icon"
-                                        variant="secondary"
-                                        className="absolute bottom-4 right-4 z-20 shadow-lg hover:scale-105 transition-transform bg-white/90 hover:bg-white text-gray-900"
-                                        onClick={(e) => {
-                                          e.stopPropagation(); // prevent interfering with comparison viewer if any
-                                          downloadImage(result.generated[0], `angle-${idx + 1}-${Date.now()}.png`);
-                                        }}
-                                        title="Download Generated Image"
-                                      >
-                                        <Download className="w-5 h-5" />
-                                      </Button>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Flythrough Viewer Modal (Ken Burns) */}
-                            {showFlythrough && (
-                              <FlythroughViewer
-                                images={batchResults.map(r => r.generated[0]).filter(Boolean)}
-                                onClose={() => setShowFlythrough(false)}
-                                lang={lang}
-                              />
-                            )}
-
-                            {/* Video Flythrough Modal (AI Generated) */}
-                            {showVideoFlythrough && (
-                              <VideoFlythrough
-                                imageUrls={batchResults.map(r => r.generated[0]).filter(Boolean)}
-                                onClose={() => setShowVideoFlythrough(false)}
-                                lang={lang}
-                              />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -1039,6 +800,17 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {userLimit && (userLimit.role === 'admin' || userLimit.role === 'paid') && (
+        <a href="/plans" className="fixed bottom-8 right-8 z-50">
+          <Button
+            className="justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl hover:scale-105 transition-all duration-200 px-4"
+          >
+            <Settings className="w-4 h-4" />
+            {t.plans?.manageSub || "Gestisci Abbonamento"}
+          </Button>
+        </a>
+      )}
     </div>
-  )
+  );
 }

@@ -7,12 +7,15 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
+            const isOnLanding = nextUrl.pathname === '/';
             const isOnLogin = nextUrl.pathname.startsWith('/login');
             const isOnRegister = nextUrl.pathname.startsWith('/register');
+            const isOnPlans = nextUrl.pathname.startsWith('/plans');
 
-            if (isOnLogin || isOnRegister) {
+            // Redirect authenticated users away from all public/marketing pages
+            if (isOnLanding || isOnLogin || isOnRegister || isOnPlans) {
                 if (isLoggedIn) return Response.redirect(new URL('/dashboard', nextUrl));
-                return true; // Always allow access to login and register pages
+                return true; // Allow unauthenticated visitors to see these pages
             }
 
             const isAdminRoute = nextUrl.pathname.startsWith('/admin');
