@@ -10,10 +10,10 @@ export const authConfig = {
             const isOnLanding = nextUrl.pathname === '/';
             const isOnLogin = nextUrl.pathname.startsWith('/login');
             const isOnRegister = nextUrl.pathname.startsWith('/register');
-            const isOnPlans = nextUrl.pathname.startsWith('/plans');
 
-            // Redirect authenticated users away from all public/marketing pages
-            if (isOnLanding || isOnLogin || isOnRegister || isOnPlans) {
+            // Redirect authenticated users away from public/marketing pages only.
+            // /plans is NOT here — it's an authenticated subscription-management page.
+            if (isOnLanding || isOnLogin || isOnRegister) {
                 if (isLoggedIn) return Response.redirect(new URL('/dashboard', nextUrl));
                 return true; // Allow unauthenticated visitors to see these pages
             }

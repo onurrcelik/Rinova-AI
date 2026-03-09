@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { MismatchModal } from '@/components/features/layout/mismatch-modal';
-import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play, Video, Settings } from 'lucide-react';
+import { Loader2, RefreshCw, Download, Palette, Home as HomeIcon, Briefcase, Coffee, Ghost, Sun, Globe, Layers, Image as SingleImageIcon, Play, Video, Settings, Zap } from 'lucide-react';
 import { BatchUploadZone } from '@/components/features/upload/batch-upload-zone';
 import { cn } from '@/lib/utils';
 import { translations, Language } from '@/lib/translations';
@@ -626,14 +626,6 @@ function DashboardInner() {
                         />
                       </div>
                     </div>
-                    <a href="/plans">
-                      <Button
-                        size="sm"
-                        className="h-8 px-3 text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md hover:shadow-lg transition-all hover:scale-105"
-                      >
-                        {t.plans?.changePlan || "Change Plan"}
-                      </Button>
-                    </a>
                   </div>
                 )}
               </div>
@@ -848,6 +840,7 @@ function DashboardInner() {
         </div>
       </main>
 
+      {/* Fixed bottom-right: Cambia Piano for free/trial users, Gestisci Abbonamento for paid */}
       {userLimit && userLimit.role === 'paid' && (
         <Button
           className="fixed bottom-8 right-8 z-50 justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl hover:scale-105 transition-all duration-200 px-4"
@@ -879,6 +872,16 @@ function DashboardInner() {
           )}
           {t.plans?.manageSub || 'Gestisci Abbonamento'}
         </Button>
+      )}
+      {userLimit && userLimit.role !== 'paid' && userLimit.role !== 'admin' && (
+        <a href="/plans" className="fixed bottom-8 right-8 z-50">
+          <Button
+            className="justify-start gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-xl hover:scale-105 transition-all duration-200 px-4 border-0"
+          >
+            <Zap className="w-4 h-4" />
+            {t.plans?.changePlan || 'Cambia Piano'}
+          </Button>
+        </a>
       )}
     </div>
   );

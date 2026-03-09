@@ -10,7 +10,6 @@ export const config = {
         '/',           // Landing page — redirect logged-in users to /dashboard
         '/login',
         '/register',
-        '/plans',
         '/dashboard/:path*',
         '/dashboard',
         '/admin/:path*',
