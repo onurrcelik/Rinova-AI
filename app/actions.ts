@@ -1,5 +1,6 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { signIn, signOut } from '@/lib/auth/auth';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
@@ -40,6 +41,9 @@ export async function register(
 ): Promise<string | undefined> {
     const rawEmail = formData.get('email') as string;
     const password = formData.get('password') as string;
+    // Carry the plan choice from the landing page through signup
+    const plan = formData.get('plan') as string | null;
+    const validPlan = plan && ['weekly', 'monthly'].includes(plan) ? plan : null;
 
     // Allow registration with just username (e.g. "CompanyX")
     let email = rawEmail;
@@ -121,7 +125,22 @@ export async function register(
         return 'Failed to create account.';
     }
 
-    // Attempt to log in immediately
+    // If a plan was selected from the landing page, skip the default signIn
+    // redirect and instead send the user to the dashboard checkout flow.
+    if (validPlan) {
+        try {
+            // signIn with a manual redirectTo so we control where they land
+            await signIn('credentials', {
+                ...Object.fromEntries(formData),
+                redirect: false,
+            });
+        } catch {
+            // next-auth throws a redirect internally even with redirect:false sometimes
+        }
+        redirect(`/dashboard?checkout=${validPlan}`);
+    }
+
+    // Attempt to log in immediately (no plan — normal flow)
     try {
         await signIn('credentials', formData);
     } catch (error) {

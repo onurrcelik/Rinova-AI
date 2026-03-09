@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 // ... imports
 import { signOutAction } from '@/app/actions';
 import { UploadZone } from '@/components/features/upload/upload-zone';
@@ -20,7 +21,7 @@ import { BatchUploadZone } from '@/components/features/upload/batch-upload-zone'
 import { cn } from '@/lib/utils';
 import { translations, Language } from '@/lib/translations';
 
-export default function Home() {
+function DashboardInner() {
   const [lang, setLang] = useState<Language>('it'); // Default to Italian
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
@@ -50,6 +51,41 @@ export default function Home() {
   const [loadingHistory, setLoadingHistory] = useState(true);
 
   const t = translations[lang];
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [checkoutRedirecting, setCheckoutRedirecting] = useState(false);
+
+  // If user arrived via landing page pricing → register flow, kick off Stripe immediately
+  const triggerCheckout = useCallback(async (plan: string) => {
+    setCheckoutRedirecting(true);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        // Clean the URL param so a refresh won't re-trigger
+        router.replace('/dashboard');
+        window.location.href = data.url;
+      } else {
+        console.error('Checkout error:', data.error);
+        setCheckoutRedirecting(false);
+      }
+    } catch (err) {
+      console.error('Checkout failed:', err);
+      setCheckoutRedirecting(false);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const plan = searchParams.get('checkout');
+    if (plan && ['weekly', 'monthly'].includes(plan)) {
+      triggerCheckout(plan);
+    }
+  }, [searchParams, triggerCheckout]);
 
   // Room Detection State
   const [detectedType, setDetectedType] = useState<string | null>(null);
@@ -505,6 +541,16 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen bg-background font-sans text-foreground">
+      {/* Stripe checkout loading overlay */}
+      {checkoutRedirecting && (
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm gap-4">
+          <svg className="animate-spin h-10 w-10 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+          </svg>
+          <p className="text-white font-semibold text-lg">Taking you to checkout…</p>
+        </div>
+      )}
       <Sidebar
         onSelectGeneration={handleSelectGeneration}
         onNewChat={handleNewChat}
@@ -812,5 +858,20 @@ export default function Home() {
         </a>
       )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <svg className="animate-spin h-8 w-8 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+      </div>
+    }>
+      <DashboardInner />
+    </Suspense>
   );
 }

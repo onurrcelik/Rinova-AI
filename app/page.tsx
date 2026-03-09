@@ -66,7 +66,7 @@ export default function LandingPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/register"
+            href="/register?plan=monthly"
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-4 rounded-full text-lg transition-all shadow-2xl shadow-blue-900/40 hover:scale-105"
           >
             Try for free
@@ -178,7 +178,7 @@ export default function LandingPage() {
               ))}
             </ul>
             <Link
-              href="/register"
+              href="/register?plan=weekly"
               className="block text-center border border-white/20 hover:border-white/40 text-white font-semibold px-6 py-3 rounded-full transition-all hover:bg-white/5"
             >
               Get started
@@ -212,7 +212,7 @@ export default function LandingPage() {
               ))}
             </ul>
             <Link
-              href="/register"
+              href="/register?plan=monthly"
               className="block text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg shadow-blue-900/30"
             >
               Get started free
@@ -231,7 +231,7 @@ export default function LandingPage() {
         </h2>
         <p className="text-white/50 text-lg mb-10">Join real estate professionals using Rinova AI to sell properties faster.</p>
         <Link
-          href="/register"
+          href="/register?plan=monthly"
           className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-10 py-5 rounded-full text-lg transition-all shadow-2xl shadow-blue-900/40 hover:scale-105"
         >
           Get started free

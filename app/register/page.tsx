@@ -14,6 +14,9 @@ function RegisterForm() {
 
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl') || '/';
+    // Preserve the selected plan through the register → checkout flow
+    const plan = searchParams.get('plan') || '';
+
     const [errorMessage, formAction, isPending] = useActionState(
         register,
         undefined,
@@ -22,6 +25,8 @@ function RegisterForm() {
     const toggleLanguage = (value: string) => {
         setLang(value as Language);
     };
+
+    const planLabel = plan === 'weekly' ? '(Weekly – €15/wk)' : plan === 'monthly' ? '(Monthly – €50/mo)' : '';
 
     return (
         <div className="flex h-screen w-full flex-col bg-gray-50">
@@ -39,11 +44,18 @@ function RegisterForm() {
 
             <div className="flex flex-1 items-center justify-center">
                 <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
-                    <h1 className="mb-6 text-2xl font-bold text-center text-gray-900">
+                    <h1 className="mb-2 text-2xl font-bold text-center text-gray-900">
                         {t.auth.createAccountTitle}
                     </h1>
+                    {planLabel && (
+                        <p className="mb-5 text-center text-sm font-semibold text-blue-600">
+                            {planLabel}
+                        </p>
+                    )}
                     <form action={formAction} className="space-y-4">
                         <input type="hidden" name="redirectTo" value={callbackUrl} />
+                        {/* Pass the plan so the server action can redirect to checkout */}
+                        {plan && <input type="hidden" name="plan" value={plan} />}
 
                         <div>
                             <label
