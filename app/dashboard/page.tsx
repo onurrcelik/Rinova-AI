@@ -55,6 +55,7 @@ function DashboardInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [checkoutRedirecting, setCheckoutRedirecting] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
 
   // If user arrived via landing page pricing → register flow, kick off Stripe immediately
   const triggerCheckout = useCallback(async (plan: string) => {
@@ -847,15 +848,37 @@ function DashboardInner() {
         </div>
       </main>
 
-      {userLimit && (userLimit.role === 'admin' || userLimit.role === 'paid') && (
-        <a href="/plans" className="fixed bottom-8 right-8 z-50">
-          <Button
-            className="justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl hover:scale-105 transition-all duration-200 px-4"
-          >
+      {userLimit && userLimit.role === 'paid' && (
+        <Button
+          className="fixed bottom-8 right-8 z-50 justify-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl hover:scale-105 transition-all duration-200 px-4"
+          disabled={portalLoading}
+          onClick={async () => {
+            setPortalLoading(true);
+            try {
+              const res = await fetch('/api/create-portal', { method: 'POST' });
+              const data = await res.json();
+              if (data.url) {
+                window.location.href = data.url;
+              } else {
+                alert(data.error || 'Could not open subscription portal. Please try again.');
+                setPortalLoading(false);
+              }
+            } catch {
+              alert('Network error. Please try again.');
+              setPortalLoading(false);
+            }
+          }}
+        >
+          {portalLoading ? (
+            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+          ) : (
             <Settings className="w-4 h-4" />
-            {t.plans?.manageSub || "Gestisci Abbonamento"}
-          </Button>
-        </a>
+          )}
+          {t.plans?.manageSub || 'Gestisci Abbonamento'}
+        </Button>
       )}
     </div>
   );
