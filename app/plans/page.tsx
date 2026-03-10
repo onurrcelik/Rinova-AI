@@ -7,12 +7,14 @@ import { translations, Language } from '@/lib/translations';
 import { ArrowLeft, Check, Crown, Zap, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 function PlansContent() {
     const [lang, setLang] = useState<Language>('it');
     const [userRole, setUserRole] = useState<string>('general');
     const [loading, setLoading] = useState<string | null>(null);
+    const [pageLoading, setPageLoading] = useState(true);
+    const router = useRouter();
     const searchParams = useSearchParams();
     const success = searchParams.get('success');
     const canceled = searchParams.get('canceled');
@@ -20,22 +22,28 @@ function PlansContent() {
     const t = translations[lang];
 
     useEffect(() => {
-        // Fetch user role
+        // Fetch user role — redirect to login if not authenticated
         const fetchUser = async () => {
             try {
                 const res = await fetch('/api/history');
+                if (res.status === 401) {
+                    router.replace('/login');
+                    return;
+                }
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.user) {
+                    if (data?.user) {
                         setUserRole(data.user.role || 'general');
                     }
                 }
             } catch (err) {
                 console.error('Failed to fetch user:', err);
+            } finally {
+                setPageLoading(false);
             }
         };
         fetchUser();
-    }, []);
+    }, [router]);
 
     const handleSubscribe = async (plan: 'weekly' | 'monthly') => {
         setLoading(plan);
@@ -91,6 +99,14 @@ function PlansContent() {
         t.plans.feature4,
         t.plans.feature5,
     ];
+
+    if (pageLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#F2F5FF] via-white to-[#F2F5FF] flex flex-col">

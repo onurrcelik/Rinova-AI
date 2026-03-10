@@ -85,6 +85,7 @@ const jsonLd = {
 };
 
 import { Toaster } from 'sonner';
+import { ErrorReporter } from '@/components/error-reporter';
 
 export default function RootLayout({
   children,
@@ -105,6 +106,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        <ErrorReporter />
       </body>
     </html>
   );
